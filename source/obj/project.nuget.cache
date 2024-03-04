@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FcvxUafP8pI0/0NoPf/zbNNs4y+F5vTEEkvOs05PAwDk1H+PQysvpp0G70TW3CS7VXz9p/5XY7kXwGLtc8xAcw==",
+  "dgSpecHash": "2PzNlKkbWt/d7r2Z7GSBl6m7myHJUWvQuQzDvJJgf+iydEJD2jVHVSajyXaJvXG9HcQLn49fRh+iGnOAsTTJTw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lifailon\\Desktop\\ReverseProxyNET\\MyApp.csproj",
+  "projectFilePath": "C:\\Users\\Lifailon\\Documents\\Git\\ReverseProxyNET\\source\\MyApp.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
