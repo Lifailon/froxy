@@ -1,17 +1,3 @@
-C:\Users\Lifailon\Desktop\ReverseProxyNET\bin\net8.0\MyApp.exe
-C:\Users\Lifailon\Desktop\ReverseProxyNET\bin\net8.0\MyApp.deps.json
-C:\Users\Lifailon\Desktop\ReverseProxyNET\bin\net8.0\MyApp.runtimeconfig.json
-C:\Users\Lifailon\Desktop\ReverseProxyNET\bin\net8.0\MyApp.dll
-C:\Users\Lifailon\Desktop\ReverseProxyNET\bin\net8.0\MyApp.pdb
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.AssemblyInfoInputs.cache
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.AssemblyInfo.cs
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.csproj.CoreCompileInputs.cache
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.dll
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\refint\MyApp.dll
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.pdb
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\MyApp.genruntimeconfig.cache
-C:\Users\Lifailon\Desktop\ReverseProxyNET\obj\Debug\net8.0\ref\MyApp.dll
 C:\Users\Lifailon\Documents\Git\ReverseProxyNET\source\bin\net8.0\MyApp.exe
 C:\Users\Lifailon\Documents\Git\ReverseProxyNET\source\bin\net8.0\MyApp.deps.json
 C:\Users\Lifailon\Documents\Git\ReverseProxyNET\source\bin\net8.0\MyApp.runtimeconfig.json
