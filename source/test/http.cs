@@ -5,28 +5,23 @@ using System.Threading.Tasks;
 
 class Program{
     static async Task Main(string[] args) {
-        var bind = "http://*:8081/"; // прослушиваемый адрес
-        var remote = "https://kinozal.tv:443"; // адрес проксируемого сервера
+        var local = "http://*:8081/";
+        var remote = "https://kinozal.tv";
         var server = new HttpListener();
-        server.Prefixes.Add(bind);
+        server.Prefixes.Add(local);
         server.Start();
-        Console.WriteLine($"Listening on {bind}, forwarding to {remote}");
-
-        while (true)         {
+        Console.WriteLine($"Listening on {local}, forwarding to {remote}");
+        while (true) {
             var context = await server.GetContextAsync();
             HandleRequest(context, remote);
         }
     }
-
     static async Task HandleRequest(HttpListenerContext context, string remote) {
         var request = context.Request;
         var response = context.Response;
-
         Console.WriteLine($"{request.RemoteEndPoint} {request.HttpMethod} {request.Url} {request.ProtocolVersion}");
-
         using (var client = new WebClient()) {
             client.Headers.Add("User-Agent", request.UserAgent);
-
             try {
                 var requestData = await client.DownloadDataTaskAsync(remote + request.RawUrl);
                 response.OutputStream.Write(requestData, 0, requestData.Length);

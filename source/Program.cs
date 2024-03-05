@@ -10,6 +10,7 @@ class Program {
         string local_addr = null;
         string local = null;
         string remote = "https://kinozal.tv"; // null;
+
         // Анализируем аргументы командной строки
         for (int i = 0; i < args.Length; i += 2) {
             // Проверяем содержимое аргументов на соответствие
@@ -43,7 +44,12 @@ class Program {
             Console.WriteLine("Usage: rpnet --local <address:port> --remote <url>");
             return;
         }
-        // Создаем экземпляр сервера для прослушивания подключений
+
+        // Проверяем удаленный ресурс на HTTP или TCP
+        if (remote.StartsWith("http://") || remote.StartsWith("https://")) {
+            Console.WriteLine("HTTP protocol is used");
+        }
+        // Создаем экземпляр HTTP сервера для прослушивания подключений
         var server = new HttpListener();
         // Передаем параметр url и запускаем
         server.Prefixes.Add(local);
@@ -60,7 +66,7 @@ class Program {
             // Читаем контекст запроса асинхронно. Оператор await ожидает завершения асинхронной операции без блокировки основного потока выполнения.
             var context = await server.GetContextAsync();
             // Метод HandleRequest выполняется параллельно, что позволяет серверу обрабатывать несколько запросов одновременно.
-            _ = HandleRequest(context, remote, userName, password); // Игнорировать возвращаемое значение метода, так как оно не используется дальше в коде.
+            _ = HandleRequest(context, remote, userName, password);
         }
     }
 
