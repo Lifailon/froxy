@@ -12,9 +12,9 @@ This utility solves several problems:
 
 - Secondly, if you use a VPN server to access a specific URL resource (HTTP/HTTPS) on your machine, and want to provide access to it to other machines on the network without using Proxy servers, which require additional configuration on the client side.
 
-- 🔓 Thirdly, if your Web application or REST API server does not support authorization, then you can add [Base64](https://en.wikipedia.org/wiki/Base64) encryption for all clients, which requires passing in the header request authorization data. If you are using a browser, a corresponding form will be provided to complete basic authorization 🔑.
+- Thirdly, if your Web application or REST API server does not support authorization, then you can use [Base64](https://en.wikipedia.org/wiki/Base64) encryption, which obliges you to transmit authorization data in the request header for everyone clients that will connect via Proxy. If you are using a browser, a form will be provided to complete basic authorization.
 
-There are many alternatives that provide similar functionality individually. For example, `ncat` on Windows (from [nmap](https://github.com/nmap/nmap)) and `socat` on Linux for TCP or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) in Golang to redirect HTTP/HTTPS traffic.
+There are many alternatives that provide similar functionality individually. For example, `ncat` on Windows (from [nmap](https://github.com/nmap/nmap)) and `socat` on Linux for TCP or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) in Golang to redirect HTTP/HTTPS traffic. All of the above functionality is implemented in one utility `rpnet`.
 
 ## 🚀 Installation
 
@@ -103,7 +103,7 @@ Not authorization is used
 [12:06:20] 192.168.3.99 GET: /pic/favicon.ico
 ```
 
-### Authorization
+### 🔓 Authorization
 
 To use client-side authorization, you must fill in the appropriate parameters when starting the server. If the client transmits incorrect authorization data, this will be displayed in the log.
 
