@@ -18,11 +18,11 @@ There are many alternatives that provide similar functionality individually. For
 
 ## 🚀 Installation
 
-### Windows
+### 💻 Windows
 
 [Download](https://github.com/Lifailon/ReverseProxyNET/releases/latest) the portable version executable from the GitHub repository.
 
-### Linux
+### 🐧 Linux
 
 > 💡 Tested on Ubuntu 22.04.
 
@@ -62,7 +62,7 @@ Examples:
   .\rpnet.exe -local *:8443 -remote https://kinozal.tv -userName proxy -password admin
 ```
 
-### TCP
+### 📡 TCP
 
 Accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to a remote host with IP address `192.168.3.106`, where the application is running on port `80`.
 
@@ -82,7 +82,7 @@ Listening on 192.168.3.100:8444 for forwarding to 192.168.3.106:80
 
 > 💡 To listen to all network interfaces, use the * symbol instead of the local IP address (you need to run the console with administrator rights).
 
-### HTTP
+### 🌐 HTTP
 
 Accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to the remote url resource [Kinozal](https://kinozal.tv).
 
