@@ -18,7 +18,7 @@ There are many alternatives that provide similar functionality individually. For
 
 ## 🚀 Installation
 
-Download the portable version executable from the GitHub repository.
+[Download](https://github.com/Lifailon/ReverseProxyNET/releases/latest) the portable version executable from the GitHub repository.
 
 ## 📌 Usage
 
