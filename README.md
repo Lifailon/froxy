@@ -20,19 +20,21 @@ There are many alternatives that provide similar functionality individually. For
 
 ### 💻 Windows
 
-[Download](https://github.com/Lifailon/ReverseProxyNET/releases/latest) the portable version executable from the GitHub repository.
+- [Download and install](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime) .NET application runtime version 8.0.
+
+- [Download](https://github.com/Lifailon/ReverseProxyNET/releases/latest) portable version executable from GitHub repository.
 
 ### 🐧 Linux
 
 > 💡 Tested on Ubuntu 22.04.
 
-Install the .NET Application Runtime:
+- Install the .NET Application Runtime:
 
 ```shell
 sudo apt-get install -y dotnet-runtime-8.0
 ```
 
-Download the `rpnet` executable file to the `/usr/local/bin/` directory and grant execution permissions:
+- Download the `rpnet` executable file to the `/usr/local/bin/` directory and grant execution permissions:
 
 ```shell
 sudo curl -s -L https://github.com/Lifailon/ReverseProxyNET/releases/download/0.0.1-beta/rpnet-0.0.1-beta-linux-x64.1-beta -o /usr/local/bin/rpnet
