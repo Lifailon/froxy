@@ -1,16 +1,17 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Text;
 
 class Program {
     static async Task Main(string[] args) {
+        // Объявляем переменные для параметров
         string userName = null;
         string password = null;
         string local_addr = null;
         string local = null;
-        string remote = "https://kinozal.tv"; // null;
-
+        string remote = null;
         // Анализируем аргументы командной строки
         for (int i = 0; i < args.Length; i += 2) {
             // Проверяем содержимое аргументов на соответствие
@@ -44,29 +45,63 @@ class Program {
             Console.WriteLine("Usage: rpnet --local <address:port> --remote <url>");
             return;
         }
-
-        // Проверяем удаленный ресурс на HTTP или TCP
-        if (remote.StartsWith("http://") || remote.StartsWith("https://")) {
-            Console.WriteLine("HTTP protocol is used");
+        // Проверяем протокол для доступа к удаленному ресурсу
+        // TCP
+        if (!remote.StartsWith("http://") && !remote.StartsWith("https://")) {
+            Console.WriteLine("TCP protocol is used");
+            // Забираем порт
+            string[] addr_split = local_addr.Split(':');
+            string string_port = addr_split[1];
+            int local_port = int.Parse(string_port);
+            string[] addr_split_remote = remote.Split(':');
+            string remote_addr = addr_split_remote[0];
+            string string_port_remote = addr_split_remote[1];
+            int remote_port = int.Parse(string_port_remote);
+            // Создаем экземпляр TCP сокета для прослушивания подключений на всех адресах (Any)
+            TcpListener listener = new TcpListener(IPAddress.Any, local_port);
+            listener.Start();
+            Console.WriteLine($"Listening on port {local_port} for forwarding to {remote}");
+            while (true) {
+                TcpClient client = await listener.AcceptTcpClientAsync();
+                TcpClient remoteClient = new TcpClient();
+                await remoteClient.ConnectAsync(remote_addr, remote_port);
+                var clientStream = client.GetStream();
+                var remoteStream = remoteClient.GetStream();
+                Task clientReadTask = clientStream.CopyToAsync(remoteStream);
+                Task remoteReadTask = remoteStream.CopyToAsync(clientStream);
+                await Task.WhenAll(clientReadTask, remoteReadTask);
+                client.Close();
+                remoteClient.Close();
+            }
         }
-        // Создаем экземпляр HTTP сервера для прослушивания подключений
-        var server = new HttpListener();
-        // Передаем параметр url и запускаем
-        server.Prefixes.Add(local);
-        server.Start();
-        Console.WriteLine($"Listening on {local_addr} and forwarding to {remote}");
-        if (userName != null && password != null) {
-            Console.WriteLine("Authorization is used");
-        }
+        // HTTP
         else {
-            Console.WriteLine("Not authorization is used");
-        }
-        // Бесконечный цикл для обработки запросов
-        while (true) {
-            // Читаем контекст запроса асинхронно. Оператор await ожидает завершения асинхронной операции без блокировки основного потока выполнения.
-            var context = await server.GetContextAsync();
-            // Метод HandleRequest выполняется параллельно, что позволяет серверу обрабатывать несколько запросов одновременно.
-            _ = HandleRequest(context, remote, userName, password);
+            try {
+                Console.WriteLine("HTTP protocol is used");
+                // Создаем экземпляр HTTP сокета для прослушивания подключений
+                var server = new HttpListener();
+                // Передаем параметр локального url (на всех адресах: *) и запускаем
+                server.Prefixes.Add(local);
+                server.Start();
+                Console.WriteLine($"Listening on {local_addr} for forwarding to {remote}");
+                if (userName != null && password != null) {
+                    Console.WriteLine("Authorization is used");
+                }
+                else {
+                    Console.WriteLine("Not authorization is used");
+                }
+                // Бесконечный цикл для обработки запросов
+                while (true) {
+                    // Читаем контекст запроса асинхронно. Оператор await ожидает завершения асинхронной операции без блокировки основного потока выполнения
+                    var context = await server.GetContextAsync();
+                    // Метод HandleRequest выполняется параллельно, что позволяет серверу обрабатывать несколько запросов одновременно
+                    _ = HandleRequest(context, remote, userName, password);
+                }
+            }
+            // Возврощать ошибку в случае проблемы с запуском, например, нет доступа
+            catch (Exception ex) {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
     }
 
