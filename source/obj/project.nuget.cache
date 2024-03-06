@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "PhduWxmYVWT2TC25nYtn3/kv66MThk+9xt4h7VkzPOTklZXNuZK1G0AOQh0jIAk2vucgJrttlfXRLP1SjFyNQw==",
+  "dgSpecHash": "hQQcU82mPO85WdrJVDlb4fsGXbZRX1Uhk1f1mbSQsaG/7ab7RxafI1L0Qx1aqUl8nokwUwhoVUyoVthFz6Lc5g==",
   "success": true,
   "projectFilePath": "C:\\Users\\Lifailon\\Documents\\Git\\ReverseProxyNET\\source\\rpnet.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Lifailon\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.2\\microsoft.net.illink.tasks.8.0.2.nupkg.sha512"
+    "C:\\Users\\Lifailon\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.2\\microsoft.net.illink.tasks.8.0.2.nupkg.sha512",
+    "C:\\Users\\Lifailon\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\8.0.2\\microsoft.netcore.app.host.linux-x64.8.0.2.nupkg.sha512"
   ],
   "logs": []
 }

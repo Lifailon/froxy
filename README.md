@@ -2,7 +2,7 @@
 
 [➡️](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) Choose language [➡️‍](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md) Выберите язык
 
-A command line utility for implementing a .NET based reverse proxy. It is used to provide access to all hosts on the network from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
+A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to all hosts on the network from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
 
 ## 💁 For what?
 
@@ -18,9 +18,28 @@ There are many alternatives that provide similar functionality individually. For
 
 ## 🚀 Installation
 
+### Windows
+
 [Download](https://github.com/Lifailon/ReverseProxyNET/releases/latest) the portable version executable from the GitHub repository.
 
-## 📌 Usage
+### Linux
+
+> 💡 Tested on Ubuntu 22.04.
+
+Install the .NET Application Runtime:
+
+```shell
+sudo apt-get install -y dotnet-runtime-8.0
+```
+
+Download the `rpnet` executable file to the `/usr/local/bin/` directory and grant execution permissions:
+
+```shell
+sudo curl -s -L https://github.com/Lifailon/ReverseProxyNET/releases/download/0.0.1-beta/rpnet-0.0.1-beta-linux-x64.1-beta -o /usr/local/bin/rpnet
+sudo chmod +x /usr/local/bin/rpnet
+```
+
+## 📑 Usage
 
 Get Help:
 
