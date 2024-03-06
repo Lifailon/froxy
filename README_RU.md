@@ -1,4 +1,4 @@
-# Reverse Proxy .NET (rpnet)
+# Reverse Proxy .NET / rpnet
 
 [➡️](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) Choose language [➡️‍](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md) Выберите язык
 
@@ -24,7 +24,7 @@
 
 Получите справку:
 
-```csharp
+```shell
 .\rpnet.exe --help
 
 Reverse Proxy server base on .NET.
@@ -47,7 +47,7 @@ Examples:
 
 Принимает запросы на интерфейсе с ip-адресом `192.168.3.100` и порту `8443` для перенаправления на удаленный хост с ip-адресом `192.168.3.106`, где запущенно приложение на порту `80`.
 
-```csharp
+```shell
 .\rpnet.exe --local 192.168.3.100:8444 --remote 192.168.3.106:80
 TCP protocol is used
 Listening on 192.168.3.100:8444 for forwarding to 192.168.3.106:80
@@ -69,7 +69,7 @@ Listening on 192.168.3.100:8444 for forwarding to 192.168.3.106:80
 
 В примере, подключение производится от клиента с ip-адресом `192.168.3.99` с использованием метода `GET`. Указаны всех конечные точки, к которым обращается клиент для загрузки главной страницы.
 
-```csharp
+```shell
 .\rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
@@ -107,7 +107,7 @@ Not authorization is used
 
 Для использования авторизации на стороне клиента, необходимо заполнить соответствующие параметры при запуске сервера. Если клиент передает неверные авторизационные данные, то это будет отображено в логе.
 
-```csharp
+```shell
 .\rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
