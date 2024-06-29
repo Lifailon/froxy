@@ -1,2 +1,0 @@
-C:\Users\Lifailon\Documents\Git\ReverseProxyNET\source\bin\net8.0\linux-x64\publish\rpnet.pdb
-C:\Users\Lifailon\Documents\Git\ReverseProxyNET\source\bin\net8.0\linux-x64\publish\rpnet
