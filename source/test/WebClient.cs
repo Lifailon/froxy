@@ -3,19 +3,23 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-class Program{
+
+class Program {
+
     static async Task Main(string[] args) {
-        var local = "http://*:8081/";
+        var local = "http://*:8443/";
         var remote = "https://kinozal.tv";
         var server = new HttpListener();
         server.Prefixes.Add(local);
         server.Start();
         Console.WriteLine($"Listening on {local}, forwarding to {remote}");
+        
         while (true) {
             var context = await server.GetContextAsync();
             HandleRequest(context, remote);
         }
     }
+
     static async Task HandleRequest(HttpListenerContext context, string remote) {
         var request = context.Request;
         var response = context.Response;

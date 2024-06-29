@@ -1,6 +1,6 @@
 # Reverse Proxy .NET / rpnet
 
-[➡️](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) Choose language [➡️‍](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md) Выберите язык
+➡️ [Choose language](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md)
 
 A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to all hosts on the network from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
 
@@ -8,7 +8,7 @@ A cross-platform command line utility for implementing a .NET-based reverse prox
 
 This utility solves several problems:
 
-- Firstly, if you are using a VPN server in point-to-point mode, and want to give the remote machine access to applications on other machines on your network running via the TCP protocol, for example, for the RDP, SSH or RTSP protocols. This also acts as an alternative to classic ssh tunneling, for example, via `OpenSSH` or `Putty`.
+- Firstly, if you are using a VPN server in point-to-point mode, and want to provide access a second (remotely connected) machine to an application on another machine on your network running via the `TCP` protocol, for example, for the `RTSP`, `SSH` protocols , `RDP` or any other. This also acts as an alternative to classic ssh tunneling, for example, through `OpenSSH`, `Putty` or `MobaSSHTunnel`.
 
 - Secondly, if you use a VPN server to access a specific URL resource (HTTP/HTTPS) on your machine, and want to provide access to it to other machines on the network without using Proxy servers, which require additional configuration on the client side.
 
