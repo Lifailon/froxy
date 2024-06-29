@@ -41,6 +41,32 @@ sudo curl -s -L https://github.com/Lifailon/ReverseProxyNET/releases/download/0.
 sudo chmod +x /usr/local/bin/rpnet
 ```
 
+### 🔨 Build
+
+#### Clone the repository:
+
+```
+git clone https://github.com/Lifailon/ReverseProxyNET.git
+cd ReverseProxyNET
+```
+#### Start the application:
+
+```
+dotnet run
+```
+
+#### Build the application without installing .NET system dependencies:
+
+```
+dotnet publish -r win-x64 -c Release --self-contained true
+```
+
+#### Build the application into one executable file:
+
+```
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+```
+
 ## 📑 Usage
 
 Get Help:
