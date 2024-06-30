@@ -1,6 +1,15 @@
-# Reverse Proxy .NET / rpnet
+<h1 align="center">
+  Reverse Proxy .NET
+</h1>
 
-➡️ [Choose language](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md)
+<p align="center">
+<a href="https://github.com/Lifailon/rpnet"><img title="GitHub Release"src="https://img.shields.io/github/v/release/Lifailon/rpnet?display_name=release&logo=GitHub&label=GitHub&link=https%3A%2F%2Fgithub.com%2FLifailon%2Frpnet%2F"></a>
+<a href="https://www.nuget.org/packages/reverse.proxy.net"><img title="NuGet Version"src="https://img.shields.io/nuget/v/reverse.proxy.net?logo=NuGet&label=NuGet&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2Freverse.proxy.net"></a>
+<a href="https://github.com/Lifailon/rpnet"><img title="GitHub top language"src="https://img.shields.io/github/languages/top/Lifailon/rpnet?logo=csharp&link=https%3A%2F%2Fgithub.com%2Fcsharp%2Fcsharp&color=green"></a>
+<a href="https://github.com/Lifailon/rpnet/blob/rsa/LICENSE"><img title="GitHub License"src="https://img.shields.io/github/license/Lifailon/rpnet?link=https%3A%2F%2Fgithub.com%2FLifailon%2Frpnet%2Fblob%2Frsa%2FLICENSE&color=white"></a>
+</p>
+
+➡️ [Choose language](https://github.com/Lifailon/rpnet/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/rpnet/blob/rsa/README_RU.md)
 
 Кроссплатформенная утилита командной строки для реализации обратного прокси-сервер на базе .NET. Используется для предоставления доступа хостам с одного сетевого интерфейса к удаленным приложениям через протоколы HTTP и TCP доступных через другой сетевой интерфейс без лишних настроек и с поддержкой авторизации.
 
@@ -24,7 +33,7 @@
 
 - [Скачайте и установите](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime) среду выполнения приложений .NET версии 8.0.
 
-- [Загрузите](https://github.com/Lifailon/ReverseProxyNET/releases/latest) исполняемый файл портативной версии из GitHub репозитория.
+- [Загрузите](https://github.com/Lifailon/rpnet/releases/latest) исполняемый файл портативной версии из GitHub репозитория.
 
 ### 🐧 Linux
 
@@ -39,7 +48,7 @@ sudo apt-get install -y dotnet-runtime-8.0
 - Загрузите исполняемый файл `rpnet` в директорию `/usr/local/bin/` и предоставьте права на выполнение:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/ReverseProxyNET/releases/download/0.0.1-beta/rpnet-0.0.1-beta-linux-x64.1-beta -o /usr/local/bin/rpnet
+sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.1-beta/rpnet-0.0.1-beta-linux-x64.1-beta -o /usr/local/bin/rpnet
 sudo chmod +x /usr/local/bin/rpnet
 ```
 
@@ -48,8 +57,8 @@ sudo chmod +x /usr/local/bin/rpnet
 #### Клонируйте репозиторий:
 
 ```
-git clone https://github.com/Lifailon/ReverseProxyNET.git
-cd ReverseProxyNET
+git clone https://github.com/Lifailon/rpnet.git
+cd rpnet
 ```
 #### Запустить приложение:
 
