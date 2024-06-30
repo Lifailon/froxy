@@ -11,7 +11,7 @@
 
 ➡️ [Choose language](https://github.com/Lifailon/rpnet/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/rpnet/blob/rsa/README_RU.md)
 
-A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to hosts from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
+A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to hosts from one network interface to remote applications via **HTTP/HTTPS, TCP or UDP** protocols accessible through another network interface without unnecessary settings and with authorization support.
 
 ## 💁 For what?
 
