@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-
 class Program {
 
     static async Task Main(string[] args) {
@@ -13,7 +12,6 @@ class Program {
         server.Prefixes.Add(local);
         server.Start();
         Console.WriteLine($"Listening on {local}, forwarding to {remote}");
-        
         while (true) {
             var context = await server.GetContextAsync();
             HandleRequest(context, remote);

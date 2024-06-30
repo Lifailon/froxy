@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 class Program {
-    private static readonly HttpClient client = new HttpClient(); // Создать один экземпляр для всего приложения, которое не будет пересоздаваться при каждом использовании метода
+    private static readonly HttpClient client = new HttpClient();
     static async Task Main(string[] args) {
         var local = "http://*:8443/";
         var remote = "https://kinozal.tv";
@@ -13,10 +13,10 @@ class Program {
         server.Prefixes.Add(local);
         server.Start();
         Console.WriteLine($"Listening on {local}, forwarding to {remote}");
-        ServicePointManager.DefaultConnectionLimit = 1000; // Максимальное количество одновременных соединений
+        ServicePointManager.DefaultConnectionLimit = 1000;
         while (true) {
-            var context = await server.GetContextAsync(); // Обработка только GET-запросов
-            _ = Task.Run(() => HandleRequest(context, remote)); // Получение данных от клиента в отдельном асинхронном потоке с целью освобождения основного потока для обработки других задач
+            var context = await server.GetContextAsync();
+            _ = Task.Run(() => HandleRequest(context, remote));
         }
     }
     
@@ -25,13 +25,13 @@ class Program {
         var response = context.Response;
         Console.WriteLine($"{request.RemoteEndPoint} {request.HttpMethod} {request.Url} {request.ProtocolVersion}");
         try {
-            HttpResponseMessage remoteResponse = await client.GetAsync(remote + request.RawUrl); // GetAsync для обработки несколько запросов параллельно без блокировки основного потока
+            HttpResponseMessage remoteResponse = await client.GetAsync(remote + request.RawUrl);
             response.StatusCode = (int)remoteResponse.StatusCode;
-            
             if (remoteResponse.IsSuccessStatusCode) {
                 var responseData = await remoteResponse.Content.ReadAsByteArrayAsync();
                 response.OutputStream.Write(responseData, 0, responseData.Length);
-            } else {
+            }
+            else {
                 response.StatusCode = (int)remoteResponse.StatusCode;
                 var errorMessage = $"Error occurred: {remoteResponse.ReasonPhrase}";
                 var errorData = System.Text.Encoding.UTF8.GetBytes(errorMessage);

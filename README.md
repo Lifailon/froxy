@@ -2,17 +2,19 @@
 
 ➡️ [Choose language](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/ReverseProxyNET/blob/rsa/README_RU.md)
 
-A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to all hosts on the network from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
+A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to hosts from one network interface to remote applications via HTTP and TCP protocols accessible through another network interface without unnecessary settings and with authorization support.
 
 ## 💁 For what?
 
 This utility solves several problems:
 
-- Firstly, if you are using a VPN server in point-to-point mode, and want to provide access a second (remotely connected) machine to an application on another machine on your network running via the `TCP` protocol, for example, for the `RTSP`, `SSH` protocols , `RDP` or any other. This also acts as an alternative to classic ssh tunneling, for example, through `OpenSSH`, `Putty` or `MobaSSHTunnel`.
+- Firstly, this is security, because when connecting, the client does not have direct access to the machine and convenience, where, unlike a classic Proxy server, you do not need to configure the client part and specify the proxy server address on the client side.
 
-- Secondly, if you use a VPN server to access a specific URL resource (HTTP/HTTPS) on your machine, and want to provide access to it to other machines on the network without using Proxy servers, which require additional configuration on the client side.
+- Secondly, if you are using a VPN server in point-to-point mode or using network separation, where you need to provide access to a client in the DMZ (Demilitarized Zone) to an application listening for connections on a `TCP` or `UDP` port on the internal network, for example , for protocols `RTSP`, `SSH`, `RDP`. This tool can also act as an alternative to classic ssh tunneling (for example, through `OpenSSH` or `Putty`).
 
-- Thirdly, if your Web application or REST API server does not support authorization, then you can use [Base64](https://en.wikipedia.org/wiki/Base64) encryption, which obliges you to transmit authorization data in the request header for everyone clients that will connect via Proxy. If you are using a browser, a form will be provided to complete basic authorization.
+- Thirdly, if you use a VPN to access a specific URL resource via the `HTTP` or `HTTPS` protocols on your machine, and want to provide access to it to other machines on the network without using VPN or Proxy servers.
+
+- Fourthly, if your Web application or REST API server does not support authorization, then you can use [Base64](https://en.wikipedia.org/wiki/Base64) encryption, which obliges you to transmit authorization data in the request header for everyone clients that will connect via Proxy. If you are using a browser, a form will be provided to complete basic authorization.
 
 There are many alternatives that provide similar functionality individually. For example, `ncat` on Windows (from [nmap](https://github.com/nmap/nmap)) and `socat` on Linux for TCP or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) in Golang to redirect HTTP/HTTPS traffic. All of the above functionality is implemented in one utility `rpnet`.
 
