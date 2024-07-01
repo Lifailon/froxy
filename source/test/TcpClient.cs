@@ -14,25 +14,26 @@ class Program {
         int localPort = int.Parse(args[0]);
         string remoteHost = args[1];
         int remotePort = int.Parse(args[2]);
-        // Создаем TCP-сервер, который будет прослушивать все IP-адреса на указанном локальном порту
+        // Создаем TCP-сокет, который будет прослушивать все IP-адреса на указанном локальном порту
         TcpListener listener = new TcpListener(IPAddress.Any, localPort);
         listener.Start(); // Запускаем сервер для прослушивания входящих соединений
         Console.WriteLine($"Listening for incoming connections on port {localPort}...");
         while (true) {
-            // Асинхронно ждем входящего соединения от клиента
+            // Асинхронно ожидаем входящего соединения от TCP клиента на сокете
             TcpClient client = await listener.AcceptTcpClientAsync();
-            Console.WriteLine("Incoming connection accepted.");
-            // Создаем TCP-клиента для подключения к удаленному серверу
+            // Создаем новый TCP клиент для подключения к удаленному хосту
             TcpClient remoteClient = new TcpClient();
-            // Подключаемся к удаленному серверу
+            // Асинхронно подключаемся к удаленному хосту с помощью клиента
             await remoteClient.ConnectAsync(remoteHost, remotePort);
-            // Получаем сетевые потоки для передачи данных между клиентом и удаленным сервером
+            // Получаем сетевые потоки с данными от клиента и сервера
             var clientStream = client.GetStream();
             var remoteStream = remoteClient.GetStream();
-            // Копируем данные из клиентского потока в поток удаленного сервера и наоборот
+            // В асинхронных задачах копируем данные из клиентского потока в поток удаленного сервера и наоборот
+            // clientStream - это поток данных, которые клиент отправляет на ваш сервер и которые ваш сервер отправляет клиенту
+            // remoteStream - это поток данных, которые ваш сервер отправляет удаленному серверу и которые удаленный сервер отправляет вашему серверу
             Task clientReadTask = clientStream.CopyToAsync(remoteStream);
             Task remoteReadTask = remoteStream.CopyToAsync(clientStream);
-            // Ждем завершения обеих задач копирования данных
+            // Ожидаем завершения всех асинхронных задач копирования данных
             await Task.WhenAll(clientReadTask, remoteReadTask);
             // Закрываем соединения с клиентом и удаленным сервером
             client.Close();

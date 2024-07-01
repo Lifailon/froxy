@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Text;
@@ -19,15 +21,15 @@ class rpNet {
                 Console.WriteLine("Reverse Proxy server base on .NET.\n");
                 Console.WriteLine("Parameters:");
                 Console.WriteLine("  -h, --help                       Show help.");
-                Console.WriteLine("  -l, --local <address:port>       Address and port of the interface through which requests will be proxy.");
-                Console.WriteLine("  -r, --remote <address:port/url>  HTTP/HTTPS address of the remote resource to which requests will be proxy.");
-                Console.WriteLine("  -u, --userName <admin>           User name for authorization.");
+                Console.WriteLine("  -l, --local <address:port/port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.");
+                Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.");
+                Console.WriteLine("  -u, --userName <admin>           User name for authorization (HTTP only).");
                 Console.WriteLine("  -p, --password <admin>           User password for authorization.\n");
                 Console.WriteLine("Examples:");
-                Console.WriteLine(@"  .\rpnet.exe -l 127.0.0.1:8443 -r 192.168.3.106:80");
-                Console.WriteLine(@"  .\rpnet.exe -l 127.0.0.1:8443 -r https://kinozal.tv");
-                Console.WriteLine(@"  .\rpnet.exe -l *:8443 -r https://kinozal.tv");
-                Console.WriteLine(@"  .\rpnet.exe -local *:8443 -remote https://kinozal.tv -userName proxy -password admin");
+                Console.WriteLine(@"  .\rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.106:80");
+                Console.WriteLine(@"  .\rpnet.exe --local 5514 --remote 192.168.3.100:514");
+                Console.WriteLine(@"  .\rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv");
+                Console.WriteLine(@"  .\rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin");
                 Console.WriteLine();
                 return;
             }
@@ -51,58 +53,84 @@ class rpNet {
             Console.WriteLine("Usage: rpnet --local <address:port> --remote <address:port/url>");
             return;
         }
-        // Проверяем протокол для доступа к удаленному ресурсу
-        // TCP
+        // Проверяем протокол доступа к удаленному ресурсу
+        // TCP или UDP
         if (!remote.StartsWith("http://") && !remote.StartsWith("https://")) {
-            try {
-                Console.WriteLine("TCP protocol is used");
-                // Забираем порт
-                string[] addr_split = local_addr.Split(':');
-                string local_string_addr = addr_split[0];
-                string string_port = addr_split[1];
-                int local_port = int.Parse(string_port);
-                string[] addr_split_remote = remote.Split(':');
-                string remote_addr = addr_split_remote[0];
-                string string_port_remote = addr_split_remote[1];
-                int remote_port = int.Parse(string_port_remote);
-                // Проверяем переданный адрес для прослушивания и создаем экземпляр TCP сокета
-                TcpListener listener;
-                if (local_string_addr == "*") {
-                    listener = new TcpListener(IPAddress.Any, local_port);
+            // UDP
+            if (!local_addr.Contains('.') && !local_addr.Contains(':')) {
+                try {
+                    Console.WriteLine("UDP protocol is used");
+                    int local_port = int.Parse(local_addr);
+                    string[] addr_split_remote = remote.Split(':');
+                    string remote_addr = addr_split_remote[0];
+                    string string_port_remote = addr_split_remote[1];
+                    int remote_port = int.Parse(string_port_remote);
+                    // Создаем экземпляр UDP сокета
+                    UdpClient udpClient = new UdpClient(local_port);
+                    IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(remote_addr), remote_port);
+                    Console.WriteLine($"Listening for incoming UDP packets on port {local_port}...");
+                    while (true) {
+                        var receivedResult = await udpClient.ReceiveAsync();
+                        byte[] receivedData = receivedResult.Buffer;
+                        await udpClient.SendAsync(receivedData, receivedData.Length, remoteEndPoint);
+                    }
                 }
-                else {
-                    IPAddress local_ip_addr = IPAddress.Parse(local_string_addr);
-                    listener = new TcpListener(local_ip_addr, local_port);
-                }
-                listener.Start();
-                Console.WriteLine($"Listening on {local_string_addr}:{local_port} for forwarding to {remote}");
-                while (true) {
-                    // Принимаем входящее TCP подключение
-                    TcpClient client = await listener.AcceptTcpClientAsync();
-                    // Создаем новый TCP клиент для подключения к удаленному хосту
-                    TcpClient remoteClient = new TcpClient();
-                    // Подключаемся к удаленному хосту асинхронно
-                    await remoteClient.ConnectAsync(remote_addr, remote_port);
-                    // Логируем запрос
-                    Console.WriteLine(
-                        $"[{DateTime.Now.ToString("HH:mm:ss")}] {client.Client.RemoteEndPoint}: {remoteClient.Client.RemoteEndPoint}"
-                    );
-                    // Получаем потоки данных для клиента и удаленного хоста
-                    var clientStream = client.GetStream();
-                    var remoteStream = remoteClient.GetStream();
-                    // Запускаем асинхронные задачи копирования данных между клиентом и удаленным хостом
-                    Task clientReadTask = clientStream.CopyToAsync(remoteStream);
-                    Task remoteReadTask = remoteStream.CopyToAsync(clientStream);
-                    // Ожидаем завершения всех асинхронных задач
-                    await Task.WhenAll(clientReadTask, remoteReadTask);
-                    // Закрываем подключение с клиентом и удаленным хостом
-                    client.Close();
-                    remoteClient.Close();
+                catch (Exception ex) {
+                    Console.WriteLine($"Error: {ex.Message}");
                 }
             }
-            // Возврощать ошибку в случае проблемы с запуском, например, неправильно передан локальный адрес (требуемый адрес для своего контекста неверен)
-            catch (Exception ex) {
-                Console.WriteLine($"Error: {ex.Message}");
+            // TCP
+            else {
+                try {
+                    Console.WriteLine("TCP protocol is used");
+                    // Забираем адрес и порт из параметров локального и удаленного адреса
+                    string[] addr_split = local_addr.Split(':');
+                    string local_string_addr = addr_split[0];
+                    string string_port = addr_split[1];
+                    int local_port = int.Parse(string_port);
+                    string[] addr_split_remote = remote.Split(':');
+                    string remote_addr = addr_split_remote[0];
+                    string string_port_remote = addr_split_remote[1];
+                    int remote_port = int.Parse(string_port_remote);                
+                    // Проверяем переданный адрес для прослушивания и создаем экземпляр TCP сокета
+                    TcpListener listener;
+                    if (local_string_addr == "*") {
+                        listener = new TcpListener(IPAddress.Any, local_port);
+                    }
+                    else {
+                        IPAddress local_ip_addr = IPAddress.Parse(local_string_addr);
+                        listener = new TcpListener(local_ip_addr, local_port);
+                    }
+                    listener.Start();
+                    Console.WriteLine($"Listening on {local_string_addr}:{local_port} for forwarding to {remote}");
+                    while (true) {
+                        // Асинхронно ожидаем входящего соединения от TCP клиента на сокете
+                        TcpClient client = await listener.AcceptTcpClientAsync();
+                        // Создаем новый TCP клиент для подключения к удаленному хосту
+                        TcpClient remoteClient = new TcpClient();
+                        // Асинхронно подключаемся к удаленному хосту с помощью клиента
+                        await remoteClient.ConnectAsync(remote_addr, remote_port);
+                        // Логируем запрос
+                        Console.WriteLine(
+                            $"[{DateTime.Now.ToString("HH:mm:ss")}] {client.Client.RemoteEndPoint}: {remoteClient.Client.RemoteEndPoint}"
+                        );
+                        // Получаем сетевые потоки с данными от клиента и сервера
+                        var clientStream = client.GetStream();
+                        var remoteStream = remoteClient.GetStream();
+                        // В асинхронных задачах копируем данные из клиентского потока в поток удаленного сервера и наоборот
+                        Task clientReadTask = clientStream.CopyToAsync(remoteStream);
+                        Task remoteReadTask = remoteStream.CopyToAsync(clientStream);
+                        // Ожидаем завершения всех асинхронных задач копирования данных
+                        await Task.WhenAll(clientReadTask, remoteReadTask);
+                        // Закрываем соединения с клиентом и удаленным сервером
+                        client.Close();
+                        remoteClient.Close();
+                    }
+                }
+                // Возврощать ошибку в случае проблемы с запуском, например, неправильно передан локальный адрес (требуемый адрес для своего контекста неверен)
+                catch (Exception ex) {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
         }
         // HTTP
@@ -135,7 +163,7 @@ class rpNet {
             }
         }
     }
-
+    // Обработка HTTP запроса от клиента и ответа от сервера
     static async Task HandleRequest(HttpListenerContext context, string remote, string userName, string password) {
         var request = context.Request;
         var response = context.Response;
