@@ -28,10 +28,10 @@ class rpNet {
                 Console.WriteLine("  -u, --userName <admin>           User name for authorization (HTTP only).");
                 Console.WriteLine("  -p, --password <admin>           User password for authorization.\n");
                 Console.WriteLine("Examples:");
-                Console.WriteLine(@"  .\rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80");
-                Console.WriteLine(@"  .\rpnet.exe --local 5514 --remote 192.168.3.100:514");
-                Console.WriteLine(@"  .\rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv");
-                Console.WriteLine(@"  .\rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin");
+                Console.WriteLine(@"  rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80");
+                Console.WriteLine(@"  rpnet.exe --local 5514 --remote 192.168.3.100:514");
+                Console.WriteLine(@"  rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv");
+                Console.WriteLine(@"  rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin");
                 Console.WriteLine();
                 return;
             }
