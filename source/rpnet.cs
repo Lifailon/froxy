@@ -21,7 +21,7 @@ class rpNet {
                 Console.WriteLine("Reverse Proxy server base on .NET.\n");
                 Console.WriteLine("Parameters:");
                 Console.WriteLine("  -h, --help                       Show help.");
-                Console.WriteLine("  -l, --local <address:port/port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.");
+                Console.WriteLine("  -l, --local <port/address:port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.");
                 Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.");
                 Console.WriteLine("  -u, --userName <admin>           User name for authorization (HTTP only).");
                 Console.WriteLine("  -p, --password <admin>           User password for authorization.\n");
@@ -50,7 +50,7 @@ class rpNet {
         }
         // Проверяем, что были переданы все нужные аргументы для запуска
         if (local == null || remote == null) {
-            Console.WriteLine("Usage: rpnet --local <address:port> --remote <address:port/url>");
+            Console.WriteLine("Usage: rpnet --local <port/address:port> --remote <address:port/url>");
             return;
         }
         // Проверяем протокол доступа к удаленному ресурсу
@@ -138,7 +138,7 @@ class rpNet {
                     // Читаем контекст запроса асинхронно. Оператор await ожидает завершения асинхронной операции без блокировки основного потока выполнения
                     var context = await server.GetContextAsync();
                     // Метод HandleRequest выполняется параллельно, что позволяет серверу обрабатывать несколько запросов одновременно
-                    _ = HandleRequest(context, remote, userName, password);
+                    _ = HandleHttpRequest(context, remote, userName, password);
                 }
             }
             // Возврощать ошибку в случае проблемы с запуском, например, нет доступа
@@ -148,6 +148,7 @@ class rpNet {
         }
     }
 
+    // Обработка TCP запросов
     static async Task HandleTcpRequest(TcpClient client, string remoteHost, int remotePort) {
         TcpClient remoteClient = null;
         try {
@@ -166,13 +167,18 @@ class rpNet {
         } catch (Exception ex) {
             Console.WriteLine($"Error: {ex.Message}");
         } finally {
+            // Логируем запрос
+            Console.WriteLine(
+                $"[{DateTime.Now.ToString("HH:mm:ss")}] {client.Client.RemoteEndPoint}: {remoteClient.Client.RemoteEndPoint}"
+            );
+            // Закрываем соединения с клиентом и сервером
             client.Close();
             remoteClient?.Close();
         }
     }
 
-    // Обработка HTTP запроса от клиента и ответа от сервера
-    static async Task HandleRequest(HttpListenerContext context, string remote, string userName, string password) {
+    // Обработка HTTP запросов
+    static async Task HandleHttpRequest(HttpListenerContext context, string remote, string userName, string password) {
         var request = context.Request;
         var response = context.Response;
         // Выводим информацию запросов в консоль (лог)

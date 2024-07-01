@@ -44,6 +44,7 @@ class Program {
         } catch (Exception ex) {
             Console.WriteLine($"Error: {ex.Message}");
         } finally {
+            // Закрываем соединения с клиентом и сервером
             client.Close();
             remoteClient?.Close();
         }

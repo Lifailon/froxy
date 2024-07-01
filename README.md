@@ -83,7 +83,7 @@ dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
 Get Help:
 
 ```shell
-.\rpnet.exe --help
+rpnet.exe --help
 
 Reverse Proxy server base on .NET.
 
@@ -106,20 +106,34 @@ Examples:
 Accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to a remote host with IP address `192.168.3.106`, where the application is running on port `80`.
 
 ```shell
-.\rpnet.exe --local 192.168.3.100:8444 --remote 192.168.3.106:80
+rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.100:80
+
 TCP protocol is used
-Listening on 192.168.3.100:8444 for forwarding to 192.168.3.106:80
-[13:40:23] 192.168.3.99:29829: [::ffff:192.168.3.106]:80
-[13:40:23] 192.168.3.99:29830: [::ffff:192.168.3.106]:80
-[13:40:23] 192.168.3.99:29833: [::ffff:192.168.3.106]:80
-[13:40:23] 192.168.3.99:29838: [::ffff:192.168.3.106]:80
-[13:40:23] 192.168.3.99:29840: [::ffff:192.168.3.106]:80
-[13:40:23] 192.168.3.99:29842: [::ffff:192.168.3.106]:80
-[13:40:24] 192.168.3.99:29846: [::ffff:192.168.3.106]:80
-[13:40:24] 192.168.3.99:29848: [::ffff:192.168.3.106]:80
+Listening on 127.0.0.1:8443 for forwarding to 192.168.3.101:80
+[14:22:46] 127.0.0.1:50691: [::ffff:192.168.3.101]:80
+[14:22:47] 127.0.0.1:50698: [::ffff:192.168.3.101]:80
+[14:22:48] 127.0.0.1:50700: [::ffff:192.168.3.101]:80
+[14:22:49] 127.0.0.1:50704: [::ffff:192.168.3.101]:80
+[14:22:50] 127.0.0.1:50702: [::ffff:192.168.3.101]:80
+[14:22:52] 127.0.0.1:50835: [::ffff:192.168.3.101]:80
+[14:22:52] 127.0.0.1:50837: [::ffff:192.168.3.101]:80
+[14:22:55] 127.0.0.1:50987: [::ffff:192.168.3.101]:80
+[14:22:55] 127.0.0.1:50990: [::ffff:192.168.3.101]:80
+[14:22:55] 127.0.0.1:50989: [::ffff:192.168.3.101]:80
+[14:22:57] 127.0.0.1:51066: [::ffff:192.168.3.101]:80
 ```
 
-> 💡 To listen to all network interfaces, use the * symbol instead of the local IP address (you need to run the console with administrator rights).
+> 💡 To listen to all network interfaces, use the `*` symbol instead of the local IP address (you need to run the console with administrator rights).
+
+### 🔌 UDP
+
+Example of redirecting requests from a client to a Syslog server via relay.
+
+<h1 align="center">
+<img src="screen/udp-syslog-relay.jpg" width="600"/></a>
+</h1>
+
+> 💡 When using the `UDP` protocol, no local address is specified.
 
 ### 🌐 HTTP
 
@@ -128,7 +142,8 @@ Accepts requests on the interface with IP address `192.168.3.100` and port `8443
 In the example, the connection is made from a client with the IP address `192.168.3.99` using the `GET` method. Lists all the endpoints that the client contacts to load the home page.
 
 ```shell
-.\rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv
+rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv
+
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
 Not authorization is used
@@ -166,7 +181,8 @@ Not authorization is used
 To use client-side authorization, you must fill in the appropriate parameters when starting the server. If the client transmits incorrect authorization data, this will be displayed in the log.
 
 ```shell
-.\rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
+rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
+
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
 Authorization is used

@@ -19,11 +19,11 @@ class Program {
         ServicePointManager.DefaultConnectionLimit = 1000; // Устанавливаем максимальное количество одновременных соединений
         while (true) {
             var context = await server.GetContextAsync(); // Ожидаем входящий запрос
-            _ = Task.Run(() => HandleRequest(context, remote)); // Получение данных от клиента в отдельном асинхронном потоке с целью освобождения основного потока для обработки других клиентов
+            _ = Task.Run(() => HandleHttpRequest(context, remote)); // Получение данных от клиента в отдельном асинхронном потоке с целью освобождения основного потока для обработки других клиентов
         }
     }
 
-    static async Task HandleRequest(HttpListenerContext context, string remote) {
+    static async Task HandleHttpRequest(HttpListenerContext context, string remote) {
         var request = context.Request; // Получаем объект запроса от клиента
         var response = context.Response; // Получаем объект ответа, который будет отправлен клиенту
         Console.WriteLine($"{request.RemoteEndPoint} {request.HttpMethod} {request.Url} {request.ProtocolVersion}"); // Логируем информацию о запросе
