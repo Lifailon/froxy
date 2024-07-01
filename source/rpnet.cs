@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Text;
 
 class rpNet {
+    // Создаем единственный экземпляр HttpClient, чтобы использовать его для всех запросов, который не будет пересоздаваться при каждом использовании метода
+    private static readonly HttpClient client = new HttpClient();
     static async Task Main(string[] args) {
         // Объявляем переменные для параметров
         string userName = null;
@@ -68,7 +70,7 @@ class rpNet {
                     // Создаем экземпляр UDP сокета
                     UdpClient udpClient = new UdpClient(local_port);
                     IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(remote_addr), remote_port);
-                    Console.WriteLine($"Listening for incoming UDP packets on port {local_port}...");
+                    Console.WriteLine($"Listening on {local_port} port for forwarding to {remote}");
                     while (true) {
                         var receivedResult = await udpClient.ReceiveAsync();
                         byte[] receivedData = receivedResult.Buffer;
@@ -119,14 +121,17 @@ class rpNet {
         }
         // HTTP
         else {
+            Console.WriteLine("HTTP protocol is used");
             try {
-                Console.WriteLine("HTTP protocol is used");
-                // Создаем экземпляр HTTP сокета для прослушивания подключений
+                // Создаем HttpListener для обработки входящих HTTP запросов
                 var server = new HttpListener();
                 // Передаем параметр локального url (на всех адресах: *) и запускаем
                 server.Prefixes.Add(local);
                 server.Start();
                 Console.WriteLine($"Listening on {local_addr} for forwarding to {remote}");
+                // Устанавливаем максимальное количество одновременных соединений
+                ServicePointManager.DefaultConnectionLimit = 1000;
+                // Проверяем использование базовой авторизации на прокси сервере
                 if (userName != null && password != null) {
                     Console.WriteLine("Authorization is used");
                 }
@@ -135,10 +140,12 @@ class rpNet {
                 }
                 // Бесконечный цикл для обработки запросов
                 while (true) {
-                    // Читаем контекст запроса асинхронно. Оператор await ожидает завершения асинхронной операции без блокировки основного потока выполнения
+                    // var context = await server.GetContextAsync();
+                    // _ = HandleWebRequest(context, remote, userName, password);
+                    // Ожидаем входящий запрос. Оператор await ожидает завершения асинхронной операции без блокировки основного потока
                     var context = await server.GetContextAsync();
-                    // Метод HandleRequest выполняется параллельно, что позволяет серверу обрабатывать несколько запросов одновременно
-                    _ = HandleHttpRequest(context, remote, userName, password);
+                    // Метод HandleHttpRequest выполняется параллельно в отдельных задачах, что позволяет серверу обрабатывать несколько запросов одновременно
+                    _ = Task.Run(() => HandleHttpRequest(context, remote, userName, password));
                 }
             }
             // Возврощать ошибку в случае проблемы с запуском, например, нет доступа
@@ -177,11 +184,10 @@ class rpNet {
         }
     }
 
-    // Обработка HTTP запросов
+    // Обработка HTTP GET и POST запросов через HttpClient
     static async Task HandleHttpRequest(HttpListenerContext context, string remote, string userName, string password) {
-        var request = context.Request;
-        var response = context.Response;
-        // Выводим информацию запросов в консоль (лог)
+        var request = context.Request; // Получаем объект запроса от клиента
+        var response = context.Response; // Получаем объект ответа, который будет отправлен клиенту
         Console.WriteLine(
             $"[{DateTime.Now.ToString("HH:mm:ss")}] {request.RemoteEndPoint.Address} " + // ({request.UserAgent})
             $"{request.HttpMethod}: {request.RawUrl}"
@@ -220,6 +226,114 @@ class rpNet {
                 // Если заголовок Authorization отсутствует, отправляем клиенту запрос авторизации
                 Console.WriteLine(
                     $"[{DateTime.Now.ToString("HH:mm:ss")}] {request.RemoteEndPoint.Address} " + // ({request.UserAgent})
+                    $"{request.HttpMethod}: Authorization form sent"
+                );
+                response.StatusCode = 401;
+                response.Headers.Add("WWW-Authenticate", "Basic realm=\"Secure Area\"");
+                response.OutputStream.Close();
+                return;
+            }
+        }
+        try {
+            // Объявляем переменную для хранения ответа от удаленного сервера
+            HttpResponseMessage remoteResponse;
+            // Обрабатываем GET-запрос
+            if (request.HttpMethod == "GET") {
+                // Перенаправляем GET-запрос на удаленный сервер (параллельно без блокировки основного потока)
+                remoteResponse = await client.GetAsync(remote + request.RawUrl);
+            }
+            // Обрабатываем POST-запрос
+            else if (request.HttpMethod == "POST") {
+                // Читаем содержимое тела запроса от клиента
+                var requestData = await new StreamReader(request.InputStream).ReadToEndAsync();
+                // Создаем объект с содержимым запроса для отправки на удаленный сервер
+                var content = new StringContent(requestData, Encoding.UTF8, request.ContentType ?? "application/json");
+                // Перенаправляем POST-запрос на удаленный сервер
+                remoteResponse = await client.PostAsync(remote + request.RawUrl, content);
+            }
+            // Обрабатываем другие типы запросов (PUT, DELETE и т.д.)
+            else {
+                // Отвечаем (Method Not Allowed)
+                response.StatusCode = 405;
+                response.Close();
+                return;
+            }
+            // Устанавливаем статус-код ответа для клиента, полученный от удаленного сервера
+            response.StatusCode = (int)remoteResponse.StatusCode;
+            // Устанавливаем тип содержимого ответа, полученный от удаленного сервера
+            response.ContentType = remoteResponse.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
+            // Если запрос к удаленному серверу успешен
+            if (remoteResponse.IsSuccessStatusCode) {
+                // Читаем содержимое ответа
+                var responseData = await remoteResponse.Content.ReadAsByteArrayAsync();
+                // Устанавливаем длину содержимого
+                response.ContentLength64 = responseData.Length;
+                // Отправляем содержимое клиенту в выходной поток ответа
+                response.OutputStream.Write(responseData, 0, responseData.Length);
+            }
+            else {
+                // Создаем сообщение об ошибке
+                var errorMessage = $"Error occurred: {remoteResponse.ReasonPhrase}";
+                // Кодируем сообщение об ошибке в байты
+                var errorData = Encoding.UTF8.GetBytes(errorMessage);
+                // Устанавливаем длину содержимого
+                response.ContentLength64 = errorData.Length;
+                // Отвечаем клиенту с содержимым ошибки
+                response.OutputStream.Write(errorData, 0, errorData.Length);
+            }
+        }
+        // Обрабатываем исключения (аналогично ответу, в случае ошибке запроса к удаленному серверу)
+        catch (HttpRequestException ex) {
+            response.StatusCode = 500;
+            var errorMessage = $"Error occurred: {ex.Message}";
+            var errorData = Encoding.UTF8.GetBytes(errorMessage);
+            response.ContentLength64 = errorData.Length;
+            response.OutputStream.Write(errorData, 0, errorData.Length);
+        }
+        finally {
+            // Закрываем выходной поток
+            response.OutputStream.Close();
+            // Закрываем ответ
+            response.Close();
+        }
+    }
+
+    // Обработка HTTP GET запросов через WebClient
+    static async Task HandleWebRequest(HttpListenerContext context, string remote, string userName, string password) {
+        var request = context.Request;
+        var response = context.Response;
+        // Выводим информацию запросов в консоль (лог)
+        Console.WriteLine(
+            $"[{DateTime.Now.ToString("HH:mm:ss")}] {request.RemoteEndPoint.Address} " + 
+            $"{request.HttpMethod}: {request.RawUrl}"
+        );
+        // Используем проверку аутентификации, если переданы соответствующие параметры
+        if (userName != null && password != null) {
+            if (request.Headers["Authorization"] != null) {
+                string authHeader = request.Headers["Authorization"];
+                string encodedUsernamePassword = authHeader.Split(' ')[1];
+                byte[] decodedBytes = Convert.FromBase64String(encodedUsernamePassword);
+                string usernamePassword = Encoding.UTF8.GetString(decodedBytes);
+                string[] parts = usernamePassword.Split(':');
+                string userName_remote = parts[0];
+                string password_remote = parts[1];
+                if (userName_remote == userName && password_remote == password) {
+                    // Продолжаем обработку запроса
+                }
+                else {
+                    Console.WriteLine(
+                        $"[{DateTime.Now.ToString("HH:mm:ss")}] {request.RemoteEndPoint.Address} " + 
+                        $"{request.HttpMethod}: Authorization error"
+                    );
+                    response.StatusCode = 401;
+                    response.StatusDescription = "Unauthorized";
+                    response.OutputStream.Close();
+                    return;
+                }
+            }
+            else {
+                Console.WriteLine(
+                    $"[{DateTime.Now.ToString("HH:mm:ss")}] {request.RemoteEndPoint.Address} " + 
                     $"{request.HttpMethod}: Authorization form sent"
                 );
                 response.StatusCode = 401;

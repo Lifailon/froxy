@@ -18,8 +18,8 @@ class Program {
         Console.WriteLine($"Listening on {local}, forwarding to {remote}"); // Логируем параметры запуска
         ServicePointManager.DefaultConnectionLimit = 1000; // Устанавливаем максимальное количество одновременных соединений
         while (true) {
-            var context = await server.GetContextAsync(); // Ожидаем входящий запрос
-            _ = Task.Run(() => HandleHttpRequest(context, remote)); // Получение данных от клиента в отдельном асинхронном потоке с целью освобождения основного потока для обработки других клиентов
+            var context = await server.GetContextAsync(); // Ожидаем входящий запрос. Оператор await ожидает завершения асинхронной операции без блокировки основного потока
+            _ = Task.Run(() => HandleHttpRequest(context, remote)); // Метод HandleHttpRequest выполняется параллельно в отдельных задачах, что позволяет серверу обрабатывать несколько запросов одновременно
         }
     }
 
