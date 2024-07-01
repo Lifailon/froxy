@@ -37,8 +37,6 @@ There are many alternatives that provide similar functionality individually. For
 
 ### 🐧 Linux
 
-> 💡 Tested on Ubuntu 22.04.
-
 - Install the .NET Application Runtime:
 
 ```shell
@@ -51,6 +49,12 @@ sudo apt-get install -y dotnet-runtime-8.0
 sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.2/rpnet-linux-x64-0.0.2 -o /usr/local/bin/rpnet
 sudo chmod +x /usr/local/bin/rpnet
 ```
+
+💡 Tested on Ubuntu 22.04.
+
+### 📌 No dependency installation
+
+If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/rpnet/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
 
 ### 🔨 Build
 
