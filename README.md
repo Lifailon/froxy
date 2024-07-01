@@ -152,11 +152,27 @@ TCP protocol is used
 Error: An invalid IP address was specified.
 ```
 
+### SSH over TCP
+
+Example of ssh connection through a proxy server (implementation of ssh tunneling):
+
+```shell
+rpnet.exe --local 192.168.3.100:3131 --remote 192.168.3.101:2121
+```
+
+<h1 align="center">
+    <img src="screen/tcp-ssh-tunnel.jpg" width="700"/></a>
+</h1>
+
 ### 📡 UDP
 
-An example of redirecting requests from a client (`rsyslog` configuration) to the [Syslog server](https://github.com/MaxBelkov/visualsyslog) through a proxy server.
+An example of redirecting requests from a client (the `rsyslog` client configuration on the right) to the [Syslog server](https://github.com/MaxBelkov/visualsyslog) (listening for requests on port `514`) through a proxy server.
 
 💡 When using the `UDP` protocol, the local address is not specified.
+
+```shell
+rpnet.exe --local 5514 --remote 192.168.3.100:514
+```
 
 <h1 align="center">
     <img src="screen/udp-syslog-relay.jpg" width="700"/></a>
