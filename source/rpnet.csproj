@@ -3,7 +3,7 @@
         <OutputType>Exe</OutputType>
         <OutputPath>bin</OutputPath>
         <TargetFramework>net8.0</TargetFramework>
-        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
         <SelfContained>false</SelfContained>
         <Version>0.0.1</Version>
         <FileVersion>0.0.1</FileVersion>

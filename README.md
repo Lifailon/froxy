@@ -63,19 +63,35 @@ cd rpnet
 #### Start the application:
 
 ```
-dotnet run
+dotnet run [parameters]
 ```
 
-#### Build the application without installing .NET system dependencies:
+#### Build the application into one executable file:
+
+- Windows:
+
+```
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+```
+
+- Linux:
+
+```
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+```
+
+#### Build a self-contained application (without the need to install .NET platform dependencies on the executable system):
+
+- Windows:
 
 ```
 dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
-#### Build the application into one executable file:
+- Linux:
 
 ```
-dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
 ## 📑 Usage

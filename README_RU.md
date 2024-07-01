@@ -63,19 +63,35 @@ cd rpnet
 #### Запустите приложение:
 
 ```
-dotnet run
+dotnet run [parameters]
 ```
 
-#### Собрать приложение без установки зависимостей системы .NET:
+#### Собрать приложение в один исполняемый файл:
+
+- Windows:
+
+```
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+```
+
+- Linux:
+
+```
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+```
+
+#### Собрать самодостаточное приложение (без необходимости в установке зависимостей платформы .NET на исполняемой системе):
+
+- Windows:
 
 ```
 dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
-#### Собрать приложение в один исполняемый файл:
+- Linux:
 
 ```
-dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
 ## 📑 Использование
