@@ -46,7 +46,7 @@ sudo apt-get install -y dotnet-runtime-8.0
 - Download the `rpnet` executable file to the `/usr/local/bin/` directory and grant execution permissions:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.2/rpnet-linux-x64-0.0.2 -o /usr/local/bin/rpnet
+sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.2/rpnet-0.0.2-linux-x64 -o /usr/local/bin/rpnet
 sudo chmod +x /usr/local/bin/rpnet
 ```
 
