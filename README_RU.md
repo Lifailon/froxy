@@ -48,7 +48,7 @@ sudo apt-get install -y dotnet-runtime-8.0
 - Загрузите исполняемый файл `rpnet` в директорию `/usr/local/bin/` и предоставьте права на выполнение:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.1-beta/rpnet-0.0.1-beta-linux-x64.1-beta -o /usr/local/bin/rpnet
+sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.2/rpnet-linux-x64-0.0.2 -o /usr/local/bin/rpnet
 sudo chmod +x /usr/local/bin/rpnet
 ```
 
@@ -77,7 +77,7 @@ dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
 - Linux:
 
 ```
-dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
+dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true
 ```
 
 #### Собрать самодостаточное приложение (без необходимости в установке зависимостей платформы .NET на исполняемой системе):
@@ -91,7 +91,7 @@ dotnet publish -r win-x64 -c Release --self-contained true
 - Linux:
 
 ```
-dotnet publish -r win-x64 -c Release --self-contained true
+dotnet publish -r linux-x64 -c Release --self-contained true
 ```
 
 ## 📑 Использование
@@ -103,12 +103,23 @@ rpnet.exe --help
 
 Reverse Proxy server base on .NET.
 
+Parameters:
+  -h, --help                       Show help.
+  -l, --local <port/address:port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.
+  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.
+  -u, --userName <LOGIN>           User name for authorization (HTTP only).
+  -p, --password <PASSWORD>        User password for authorization.
 
+Examples:
+  rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80
+  rpnet.exe --local 5514 --remote 192.168.3.100:514
+  rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv
+  rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin
 ```
 
 ### 🔌 TCP
 
-Принимает запросы на интерфейсе с ip-адресом `192.168.3.100` и порту `8443` для перенаправления на удаленный хост с ip-адресом `192.168.3.101`, где запущенно приложение на порту `80`.
+В примере, принимает запросы на интерфейсе с ip-адресом `192.168.3.100` и порту `8443` для перенаправления на удаленный хост с ip-адресом `192.168.3.101`, где запущенно приложение на порту `80`.
 
 ```shell
 rpnet.exe --local 192.168.3.100:8443 --remote 192.168.3.101:80

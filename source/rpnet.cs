@@ -25,8 +25,8 @@ class rpNet {
                 Console.WriteLine("  -h, --help                       Show help.");
                 Console.WriteLine("  -l, --local <port/address:port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.");
                 Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.");
-                Console.WriteLine("  -u, --userName <admin>           User name for authorization (HTTP only).");
-                Console.WriteLine("  -p, --password <admin>           User password for authorization.\n");
+                Console.WriteLine("  -u, --userName <LOGIN>           User name for authorization (HTTP only).");
+                Console.WriteLine("  -p, --password <PASSWORD>        User password for authorization.\n");
                 Console.WriteLine("Examples:");
                 Console.WriteLine(@"  rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80");
                 Console.WriteLine(@"  rpnet.exe --local 5514 --remote 192.168.3.100:514");
