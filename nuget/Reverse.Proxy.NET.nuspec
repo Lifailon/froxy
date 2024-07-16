@@ -2,15 +2,16 @@
 <package >
   <metadata>
     <id>Reverse.Proxy.NET</id>
-    <version>0.0.1.1</version>
+    <version>0.0.2.1</version>
     <authors>Lifailon</authors>
     <owners>Lifailon</owners>
     <description>Cross-platform reverse proxy server base on .NET</description>
-    <tags>dotNET, CSharp, api, Proxy, HttpListener, WebClient, Sockets, TcpListener, TcpClient, Threading</tags>
-    <projectUrl>https://github.com/Lifailon/ReverseProxyNET</projectUrl>
+    <tags>CSharp, dotNET, Proxy, Sockets, HttpListener, HttpClient, TcpListener, TcpClient, UdpClient </tags>
+    <projectUrl>https://github.com/Lifailon/rpnet</projectUrl>
     <contentFiles>
       <files include="bin\net8.0\win-x64\rpnet.exe" buildAction="Content" />
       <files include="bin\net8.0\linux-x64\rpnet" buildAction="Content" />
+      <files include="rpnet.cs" buildAction="Content" />
       <files include="README.md" buildAction="Content" />
       <files include="LICENSE" buildAction="Content" />
     </contentFiles>
