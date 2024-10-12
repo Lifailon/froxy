@@ -47,7 +47,7 @@ sudo apt-get install -y dotnet-runtime-8.0
 - Download the `froxy` executable file to the `/usr/local/bin/` directory and grant execution permissions:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/froxy/releases/download/0.0.2/froxy-0.0.2-linux-x64 -o /usr/local/bin/froxy
+sudo curl -s -L https://github.com/Lifailon/froxy/releases/download/0.3.0/froxy-0.3.0-linux-x64 -o /usr/local/bin/froxy
 sudo chmod +x /usr/local/bin/froxy
 ```
 
@@ -149,6 +149,35 @@ curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://kinozal.tv/br
 curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://rutracker.org/forum/index.php
 ```
 
+You can also run the proxy in daemon mode (background process) and pass the log output to a file:
+
+```shell
+froxy --forward 8080 --user admin --pass admin >> roxy.log & 
+```
+
+The syntax is the same for both systems (Linux and Windows). It is possible to launch multiple instances to process different requests in reverse proxy mode.
+
+To read the log output, use the following construction in Windows:
+
+```PowerShell
+Get-Content $(Get-Process froxy).Path.Replace("exe","log")
+Forward proxy server running on port 8080
+[16:59:53] Connect: 192.168.3.101:47818 => rutracker.org:443
+[16:59:53] Disconnect: 192.168.3.101:47818
+```
+
+To end all background processes in Windows:
+
+```PowerShell
+Get-Process *froxy* | Stop-Process
+```
+
+Linux:
+
+```shell
+pkill froxy
+```
+
 ### 🔌 TCP
 
 In the example, accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to a remote host with IP address `192.168.3.101`, where the application is running on port `80`.
@@ -168,7 +197,7 @@ Listening on 192.168.3.100:8443 for forwarding to 192.168.3.101:80
 [15:52:35] 192.168.3.100:37999: [::ffff:192.168.3.101]:80
 ```
 
-> 💡 To listen to all network interfaces, use the `*` symbol instead of the local IP address (you need to run the console with administrator rights).
+💡 To listen to all network interfaces, use the `*` symbol instead of the local IP address (you need to run the console with administrator rights).
 
 This method is suitable for processing most protocols that operate on the basis of TCP, including support for data transmission in the request body via HTTP.
 
