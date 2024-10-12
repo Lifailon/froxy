@@ -6,53 +6,71 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Text;
 
-class rpNet {
+class Froxy {
     // Создаем единственный экземпляр HttpClient, чтобы использовать его для всех запросов, который не будет пересоздаваться при каждом использовании метода
     private static readonly HttpClient client = new HttpClient();
     static async Task Main(string[] args) {
         // Объявляем переменные для параметров
-        string userName = null;
-        string password = null;
+        int port = 0;
         string local_addr = null;
         string local = null;
         string remote = null;
+        string userName = null;
+        string password = null;
         // Анализируем аргументы командной строки
         for (int i = 0; i < args.Length; i += 2) {
-            // Проверяем содержимое аргументов на соответствие
+            // Проверяем содержимое параметров на соответствие
             if (args[i].Contains("-h")) {
-                Console.WriteLine("Reverse Proxy server base on .NET.\n");
+                Console.WriteLine();
+                Console.WriteLine("Forward and reverse proxy server base on .NET.");
+                Console.WriteLine();
                 Console.WriteLine("Parameters:");
-                Console.WriteLine("  -h, --help                       Show help.");
-                Console.WriteLine("  -l, --local <port/address:port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.");
-                Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.");
-                Console.WriteLine("  -u, --userName <LOGIN>           User name for authorization (HTTP only).");
-                Console.WriteLine("  -p, --password <PASSWORD>        User password for authorization.\n");
+                Console.WriteLine("  -h, --help                       Get help.");
+                Console.WriteLine("  -v, --version                    Get version.");
+                Console.WriteLine("  -f, --forward <port>             Start forward (CONNECT method for HTTPS) proxy server on the selected port.");
+                Console.WriteLine("  -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.");
+                Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.");
+                Console.WriteLine("  -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).");
+                Console.WriteLine("  -p, --pass <password>            User password for authorization.");
+                Console.WriteLine();
                 Console.WriteLine("Examples:");
-                Console.WriteLine(@"  rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80");
-                Console.WriteLine(@"  rpnet.exe --local 5514 --remote 192.168.3.100:514");
-                Console.WriteLine(@"  rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv");
-                Console.WriteLine(@"  rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin");
+                Console.WriteLine(@"  froxy --forward 8080");
+                Console.WriteLine(@"  froxy --local 5514 --remote 192.168.3.100:514");
+                Console.WriteLine(@"  froxy --local 127.0.0.1:8443 --remote 192.168.3.101:80");
+                Console.WriteLine(@"  froxy --local 127.0.0.1:8443 --remote https://example.com");
+                Console.WriteLine(@"  froxy --local *:8443 --remote https://example.com --user admin --pass admin");
                 Console.WriteLine();
                 return;
             }
-            // Следующий номер индекса (1/3) меньше общего количества аргументов (4) и этот аргумент не содержит ключ
-            if ((args[i] == "-l" || args[i] == "--local") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            if (args[i].Contains("-v")) {
+                Console.WriteLine("0.3.0");
+                return;
+            }
+            if ((args[i] == "-f" || args[i] == "--forward") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+                port = int.Parse(args[i + 1]);
+            }
+            else if ((args[i] == "-l" || args[i] == "--local") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 local_addr = args[i + 1];
                 local = $"http://{local_addr}/";
             }
             else if ((args[i] == "-r" || args[i] == "--remote") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 remote = args[i + 1];
             }
-            else if ((args[i] == "-u" || args[i] == "--userName") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            else if ((args[i] == "-u" || args[i] == "--user") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 userName = args[i + 1];
             }
-            else if ((args[i] == "-p" || args[i] == "--password") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            else if ((args[i] == "-p" || args[i] == "--pass") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 password = args[i + 1];
             }
         }
-        // Проверяем, что были переданы все нужные аргументы для запуска
+        // Проверяем, нужно ли запустить обычный (прямой) прокси сервер
+        if (port != 0) {
+            await ProxyServer.ProxyStart(port, userName, password);                
+            return;
+        }
+        // Проверяем, что были переданы все нужные параметры для запуска
         if (local == null || remote == null) {
-            Console.WriteLine("Usage: rpnet --local <port/address:port> --remote <address:port/url>");
+            Console.WriteLine("Invalid Parameters. Get help: froxy --help");
             return;
         }
         // Проверяем протокол доступа к удаленному ресурсу
