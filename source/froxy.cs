@@ -27,7 +27,7 @@ class Froxy {
                 Console.WriteLine("Parameters:");
                 Console.WriteLine("  -h, --help                       Get help.");
                 Console.WriteLine("  -v, --version                    Get version.");
-                Console.WriteLine("  -f, --forward <port>             Start forward (CONNECT method for HTTPS) proxy server on the selected port.");
+                Console.WriteLine("  -f, --forward <port>             Start proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.");
                 Console.WriteLine("  -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.");
                 Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.");
                 Console.WriteLine("  -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).");
@@ -47,7 +47,13 @@ class Froxy {
                 Console.WriteLine("0.3.0");
                 return;
             }
-            if ((args[i] == "-f" || args[i] == "--forward") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            if ((args[i] == "-f" || args[i] == "--forward") && 
+                i + 1 < args.Length && 
+                !args[i + 1].StartsWith("-") && 
+                int.TryParse(args[i + 1], out int checkPort) && 
+                checkPort > 1023 && 
+                checkPort < 49151)
+            {
                 port = int.Parse(args[i + 1]);
             }
             else if ((args[i] == "-l" || args[i] == "--local") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
