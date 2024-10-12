@@ -112,7 +112,7 @@ Forward and reverse proxy server base on .NET.
 Parameters:
   -h, --help                       Get help.
   -v, --version                    Get version.
-  -f, --forward <port>             Start forward (CONNECT method for HTTPS) proxy server on the selected port.
+  -f, --forward <port>             Start proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.
   -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.
   -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.
   -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).
@@ -120,6 +120,7 @@ Parameters:
 
 Examples:
   froxy --forward 8080
+  froxy --forward 8080 >> froxy.log &
   froxy --local 5514 --remote 192.168.3.100:514
   froxy --local 127.0.0.1:8443 --remote 192.168.3.101:80
   froxy --local 127.0.0.1:8443 --remote https://example.com
