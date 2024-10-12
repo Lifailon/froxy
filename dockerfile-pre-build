@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /froxy
+
+COPY source/froxy.csproj .
+COPY source/froxy.cs .
+COPY source/forward.cs .
+
+RUN dotnet build
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+
+WORKDIR /froxy
+
+COPY --from=build /froxy/bin/net8.0 ./
+
+ENV FORWARD=""
+ENV LOCAL=""
+ENV REMOTE=""
+ENV USER=""
+ENV PASSWORD=""
+
+CMD ["sh", "-c", "dotnet froxy.dll --forward $FORWARD --local $LOCAL --remote $REMOTE --user $USER --pass $PASSWORD"]
