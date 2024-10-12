@@ -89,7 +89,7 @@ class ProxyServer {
                     await writer.WriteAsync("HTTP/1.1 200 Connection Established\r\n\r\n");
                     await writer.FlushAsync();
                     // Логируем информацию о подключении
-                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {clientEndPoint.Address}:{clientEndPoint.Port} => {host}:{port}");
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Connect: {clientEndPoint.Address}:{clientEndPoint.Port} => {host}:{port}");
                     // Получаем сетевой поток для связи с сервером
                     using (NetworkStream serverStream = server.GetStream()) {
                         // Запускаем асинхронное пересылание данных в обоих направлениях (клиент - сервер)
@@ -107,7 +107,7 @@ class ProxyServer {
                     Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Error connection server: {clientEndPoint.Address}:{clientEndPoint.Port}");
                 }
                 finally {
-                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {clientEndPoint.Address}:{clientEndPoint.Port} disconnected");
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Disconnect: {clientEndPoint.Address}:{clientEndPoint.Port}");
                     // Закрываем соединение с сервером
                     server?.Close();
                 }
