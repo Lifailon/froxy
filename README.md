@@ -8,6 +8,17 @@
 
 A cross-platform command line utility for implementing a classic forward and reverse proxy server based on **.NET**. It supports forwarding any `HTTPS` traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** (`GET` and `POST` requests are supported) protocols for implementing a reverse proxy server.
 
+- [Installation](#-installation)
+- [Build](#-build)
+- [Run in a Docker container](#-docker)
+- [Usage examples](#-usage)
+- - [Forware Proxy](#-forward-proxy)
+- - [TCP](#-tcp)
+- - [SSH Tunneling](#-ssh-tunneling-over-tcp)
+- - [UDP](#-udp)
+- - [HTTP and HTTPS](#-http-and-https)
+- - [Authorization](#-authorization)
+
 ## 💁 For what?
 
 What tasks does a reverse proxy server solve:
@@ -24,7 +35,7 @@ What tasks does a reverse proxy server solve:
 
 - The ability to provide access to an external client in the **DMZ** (Demilitarized Zone) to applications that are located on the internal network, for example, for the `RTSP`, `SSH`, `RDP`, `Syslog` protocols, etc., it is enough to install a proxy with network access to both subnets and provide access through it only to selected applications on different hosts.
 
-- Can be an alternative to classic **ssh tunneling**, like in `OpenSSH`, `Putty` and others.
+- Can act as an alternative to setting up classic **ssh tunneling**, like in `OpenSSH`, `Putty` and others.
 
 There are many alternatives that provide similar functionality separately. For example, **ncat** on Windows (from [nmap](https://github.com/nmap/nmap)), **socat** on Linux for `TCP` or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) on Golang for redirecting HTTP/HTTPS traffic. All of the above functionality is implemented in one utility.
 
@@ -53,11 +64,11 @@ sudo chmod +x /usr/local/bin/froxy
 
 💡 Tested on Ubuntu system.
 
-### 📌 No dependency installation
+### 🔨 No dependency installation
 
 If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/froxy/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
 
-### 🔨 Build
+### 📦 Build
 
 - Clone the repository:
 
@@ -99,6 +110,38 @@ Linux:
 ```
 dotnet publish -r linux-x64 -c Release --self-contained true
 ```
+
+## 🐳 Docker
+
+To build a container image from project source files, use [dockerfile](dockerfile):
+
+```shell
+docker build -t froxy .
+```
+
+To pre-build the application (if this has not been done previously on the system), use [dockerfile-build](dockerfile-build):
+
+```shell
+docker build -t froxy -f dockerfile-pre-build .
+```
+
+Example of a classic proxy server running on port `8080`:
+
+```shell
+port=8080
+docker run -d \
+    --name froxy \
+    -e FORWARD=$port \
+    -e LOCAL="" \
+    -e REMOTE=""\
+    -e USER="admin"\
+    -e PASSWORD="admin"\
+    -p $port:$port \
+    --restart=unless-stopped \
+    froxy
+```
+
+If you plan to use a reverse proxy, leave `FORWARD` empty and instead pass the values to the `LOCAL` and `REMOTE` variables.
 
 ## 📑 Usage
 
@@ -158,16 +201,7 @@ froxy --forward 8080 --user admin --pass admin >> froxy.log &
 
 The syntax is the same for both systems (Linux and Windows). It is possible to launch multiple instances to process different requests in reverse proxy mode.
 
-To read the log output, use the following construction in Windows:
-
-```PowerShell
-Get-Content $(Get-Process froxy).Path.Replace("exe","log")
-Forward proxy server running on port 8080
-[16:59:53] Connect: 192.168.3.101:47818 => rutracker.org:443
-[16:59:53] Disconnect: 192.168.3.101:47818
-```
-
-To end all background processes in Windows:
+To stop all background processes in Windows:
 
 ```PowerShell
 Get-Process *froxy* | Stop-Process
@@ -244,7 +278,7 @@ froxy --local 5514 --remote 192.168.3.100:514
 
 ![](image/udp-syslog-relay.jpg)
 
-### 🌐 HTTP & HTTPS
+### 🌐 HTTP and HTTPS
 
 When using proxying using the **HTTP or HTTPS** protocols, you must pass a url address that begins with the name of the protocol `http://` or `https://`.
 
