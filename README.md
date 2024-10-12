@@ -18,7 +18,7 @@ What tasks does a reverse proxy server solve:
 
 - Unlike the classic Proxy, you do not need to specify the proxy server address on the client side in the application settings or change the code and use external modules (for example, [proxy-agents](https://github.com/TooTallNate/proxy-agents)) for each request via the API client, but only change the url to the proxy server address.
 
-- If you use a **VPN** service to access a specific URL on the Internet via the `HTTP` or `HTTPS` protocols on your machine, you can provide access to it to other machines on the network, without having to install and use VPN on other clients.
+- If you use a **VPN** service to access a specific URL on the Internet via the `HTTP` or `HTTPS` protocols on your machine, you can provide access to it to other machines on the network, without having to install and use VPN on other clients (for example, on mobile devices the Proxy server address can be specified in the Wi-Fi connection configuration).
 
 - Provide direct access to other hosts in the second subnet, if you use a **VPN** server in point-to-point mode (for example, [Radmin](https://www.radmin-vpn.com)).
 
@@ -186,21 +186,25 @@ Error: An invalid IP address was specified.
 
 To solve this problem, it is necessary to use proxying via the HTTP or HTTPS protocol.
 
-### SSH over TCP
+### SSH tunneling over TCP
 
-Example of ssh connection through a proxy server (implementation of ssh tunneling):
+Example ssh connection via proxy server:
 
 ```shell
 froxy --local 192.168.3.100:3131 --remote 192.168.3.101:2121
 ```
 
-<h1 align="center">
-    <img src="screen/tcp-ssh-tunnel.jpg" width="700"/></a>
-</h1>
+On the client side, we connect to host `192.168.3.101`, through a proxy with address `192.168.3.100`:
+
+```shell
+ssh lifailon@192.168.3.100 -p 3131
+```
+
+![img](image/tcp-ssh-tunnel.jpg)
 
 ### 📡 UDP
 
-An example of redirecting requests from a client (the `rsyslog` client configuration on the right) to the [Syslog server](https://github.com/MaxBelkov/visualsyslog) (listening for requests on port `514`) through a proxy server.
+An example of forwarding requests from a client (the `rsyslog` client configuration on the right) via UDP (one `@` character in the configuration) to the [Visual Syslog server](https://github.com/MaxBelkov/visualsyslog) listening to requests on port `514` through a proxy server that listens for requests on port `5514`.
 
 💡 When using the `UDP` protocol, the local address is not specified.
 
@@ -208,9 +212,7 @@ An example of redirecting requests from a client (the `rsyslog` client configura
 froxy --local 5514 --remote 192.168.3.100:514
 ```
 
-<h1 align="center">
-    <img src="screen/udp-syslog-relay.jpg" width="700"/></a>
-</h1>
+![](image/udp-syslog-relay.jpg)
 
 ### 🌐 HTTP & HTTPS
 
