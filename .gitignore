@@ -1,4 +1,5 @@
-.vscode
 /source/bin/
 /source/obj/
+.vscode
 *.sln
+*.log
