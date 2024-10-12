@@ -186,7 +186,7 @@ Error: An invalid IP address was specified.
 
 To solve this problem, it is necessary to use proxying via the HTTP or HTTPS protocol.
 
-### SSH tunneling over TCP
+### 🚧 SSH tunneling over TCP
 
 Example ssh connection via proxy server:
 
