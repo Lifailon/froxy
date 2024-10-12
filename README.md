@@ -1,31 +1,32 @@
-<h1 align="center">
-    Reverse Proxy .NET
-</h1>
+<h2 align="center">
+    Froxy
+</h2>
 
-<p align="center">
-    <a href="https://github.com/Lifailon/rpnet"><img title="GitHub Release"src="https://img.shields.io/github/v/release/Lifailon/rpnet?display_name=release&logo=GitHub&label=GitHub&link=https%3A%2F%2Fgithub.com%2FLifailon%2Frpnet%2F"></a>
-    <a href="https://www.nuget.org/packages/reverse.proxy.net"><img title="NuGet Version"src="https://img.shields.io/nuget/v/reverse.proxy.net?logo=NuGet&label=NuGet&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2Freverse.proxy.net"></a>
-    <a href="https://github.com/Lifailon/rpnet"><img title="GitHub top language"src="https://img.shields.io/github/languages/top/Lifailon/rpnet?logo=csharp&link=https%3A%2F%2Fgithub.com%2Fcsharp%2Fcsharp&color=green"></a>
-    <a href="https://github.com/Lifailon/rpnet/blob/rsa/LICENSE"><img title="GitHub License"src="https://img.shields.io/github/license/Lifailon/rpnet?link=https%3A%2F%2Fgithub.com%2FLifailon%2Frpnet%2Fblob%2Frsa%2FLICENSE&color=white"></a>
-</p>
+<h4 align="center">
+    <strong>English</strong> | <a href="README_RU.md">Русский</a>
+</h4>
 
-➡️ [Choose language](https://github.com/Lifailon/rpnet/blob/rsa/README.md) ➡️‍ [Выберите язык](https://github.com/Lifailon/rpnet/blob/rsa/README_RU.md)
-
-A cross-platform command line utility for implementing a .NET-based reverse proxy. It is used to provide access to hosts from one network interface to remote applications via **TCP, UDP or HTTP/HTTPS** protocols accessible through another network interface without unnecessary settings and with authorization support.
+A cross-platform command line utility for implementing a classic forward and reverse proxy server based on **.NET**. It supports forwarding any `HTTPS` traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** (`GET` and `POST` requests are supported) protocols for implementing a reverse proxy server.
 
 ## 💁 For what?
 
-This utility solves several problems:
+What tasks does a reverse proxy server solve:
 
-- Firstly, this is security, because when connecting, the client does not have direct access to the machine and convenience, where, unlike a classic Proxy server, you do not need to configure the server part and specify the proxy server address on the client side in the application settings or every time you access via REST client.
+- **Security**, since the client does not have direct access to the target machine where the application is running, for example, a web server.
 
-- Secondly, if you are using a VPN server in point-to-point mode or using network separation, where you need to provide access to a client in the DMZ (Demilitarized Zone) to an application listening for connections on a `TCP` or `UDP` port on the internal network, for example , for protocols `RTSP`, `SSH`, `RDP`, `Syslog` and others. This tool can also act as an alternative to classic ssh tunneling (for example, through `OpenSSH` or `Putty`).
+- If your Web application or `API` server does not support **authorization**, then you can use [Base64](https://en.wikipedia.org/wiki/Base64) encryption, which requires transmitting authorization data in the request header for all clients that will connect via Proxy. If you use a browser, then a corresponding form for passing basic authorization will be provided.
 
-- Thirdly, if you use a VPN to access a specific URL resource via the `HTTP` or `HTTPS` protocols on your machine, and want to provide access to it to other machines on the network without using VPN or Proxy servers.
+- Unlike the classic Proxy, you do not need to specify the proxy server address on the client side in the application settings or change the code and use external modules (for example, [proxy-agents](https://github.com/TooTallNate/proxy-agents)) for each request via the API client, but only change the url to the proxy server address.
 
-- Fourthly, if your Web application or REST API server does not support authorization, then you can use [Base64](https://en.wikipedia.org/wiki/Base64) encryption, which obliges you to transmit authorization data in the request header for everyone clients that will connect via Proxy. If you are using a browser, a form will be provided to complete basic authorization.
+- If you use a **VPN** service to access a specific URL on the Internet via the `HTTP` or `HTTPS` protocols on your machine, you can provide access to it to other machines on the network, without having to install and use VPN on other clients.
 
-There are many alternatives that provide similar functionality individually. For example, `ncat` on Windows (from [nmap](https://github.com/nmap/nmap)) and `socat` on Linux for TCP or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) in Golang to redirect HTTP/HTTPS traffic. All of the above functionality is implemented in one utility `rpnet`.
+- Provide direct access to other hosts in the second subnet, if you use a **VPN** server in point-to-point mode (for example, [Radmin](https://www.radmin-vpn.com)).
+
+- The ability to provide access to an external client in the **DMZ** (Demilitarized Zone) to applications that are located on the internal network, for example, for the `RTSP`, `SSH`, `RDP`, `Syslog` protocols, etc., it is enough to install a proxy with network access to both subnets and provide access through it only to selected applications on different hosts.
+
+- Can be an alternative to classic **ssh tunneling**, like in `OpenSSH`, `Putty` and others.
+
+There are many alternatives that provide similar functionality separately. For example, **ncat** on Windows (from [nmap](https://github.com/nmap/nmap)), **socat** on Linux for `TCP` or [ReverseProxy](https://github.com/ilanyu/ReverseProxy) on Golang for redirecting HTTP/HTTPS traffic. All of the above functionality is implemented in one utility.
 
 ## 🚀 Installation
 
@@ -33,7 +34,7 @@ There are many alternatives that provide similar functionality individually. For
 
 - [Download and install](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime) .NET application runtime version 8.0.
 
-- [Download](https://github.com/Lifailon/rpnet/releases/latest) portable version executable from GitHub repository.
+- [Download](https://github.com/Lifailon/froxy/releases/latest) portable version executable from GitHub repository.
 
 ### 🐧 Linux
 
@@ -43,56 +44,57 @@ There are many alternatives that provide similar functionality individually. For
 sudo apt-get install -y dotnet-runtime-8.0
 ```
 
-- Download the `rpnet` executable file to the `/usr/local/bin/` directory and grant execution permissions:
+- Download the `froxy` executable file to the `/usr/local/bin/` directory and grant execution permissions:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/rpnet/releases/download/0.0.2/rpnet-0.0.2-linux-x64 -o /usr/local/bin/rpnet
-sudo chmod +x /usr/local/bin/rpnet
+sudo curl -s -L https://github.com/Lifailon/froxy/releases/download/0.0.2/froxy-0.0.2-linux-x64 -o /usr/local/bin/froxy
+sudo chmod +x /usr/local/bin/froxy
 ```
 
-💡 Tested on Ubuntu 22.04.
+💡 Tested on Ubuntu system.
 
 ### 📌 No dependency installation
 
-If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/rpnet/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
+If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/froxy/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
 
 ### 🔨 Build
 
-#### Clone the repository:
+- Clone the repository:
 
 ```
-git clone https://github.com/Lifailon/rpnet.git
-cd rpnet
-```
-#### Start the application:
-
-```
-dotnet run [parameters]
+git clone https://github.com/Lifailon/froxy
+cd froxy/source
 ```
 
-#### Build the application into one executable file:
+- Build and run the application:
 
-- Windows:
+```
+dotnet build && dotnet run [parameters]
+```
+
+- Build the application into one executable file:
+
+Windows:
 
 ```
 dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
 ```
 
-- Linux:
+Linux:
 
 ```
 dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true
 ```
 
-#### Build a self-contained application (without the need to install .NET platform dependencies on the executable system):
+- Build a self-contained application (without the need to install .NET platform dependencies on the executable system):
 
-- Windows:
+Windows:
 
 ```
 dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
-- Linux:
+Linux:
 
 ```
 dotnet publish -r linux-x64 -c Release --self-contained true
@@ -103,22 +105,48 @@ dotnet publish -r linux-x64 -c Release --self-contained true
 Get Help:
 
 ```shell
-rpnet.exe --help
+froxy --help
 
-Reverse Proxy server base on .NET.
+Forward and reverse proxy server base on .NET.
 
 Parameters:
-  -h, --help                       Show help.
-  -l, --local <port/address:port>  Address and port of the interface or only the port (for udp) through which proxy requests will pass.
-  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS address of the remote resource to which requests will be proxy.
-  -u, --userName <LOGIN>           User name for authorization (HTTP only).
-  -p, --password <PASSWORD>        User password for authorization.
+  -h, --help                       Get help.
+  -v, --version                    Get version.
+  -f, --forward <port>             Start forward (CONNECT method for HTTPS) proxy server on the selected port.
+  -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.
+  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.
+  -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).
+  -p, --pass <password>            User password for authorization.
 
 Examples:
-  rpnet.exe --local 127.0.0.1:8443 --remote 192.168.3.101:80
-  rpnet.exe --local 5514 --remote 192.168.3.100:514
-  rpnet.exe --local 127.0.0.1:8443 --remote https://kinozal.tv
-  rpnet.exe --local *:8443 --remote https://kinozal.tv --userName proxy --password admin
+  froxy --forward 8080
+  froxy --local 5514 --remote 192.168.3.100:514
+  froxy --local 127.0.0.1:8443 --remote 192.168.3.101:80
+  froxy --local 127.0.0.1:8443 --remote https://example.com
+  froxy --local *:8443 --remote https://example.com --user admin --pass admin
+```
+
+### 📭 Forward Proxy
+
+Running a direct proxy on the server:
+
+```shell
+froxy --forward 8080 --user admin --pass admin
+
+Forward proxy server running on port 8080
+[14:58:18] Error authentication: 192.168.3.101:47156
+[14:58:20] Connect: 192.168.3.101:47170 => kinozal.tv:443
+[14:58:20] Disconnect: 192.168.3.101:47170
+[14:58:35] Connect: 192.168.3.101:47522 => rutracker.org:443
+[14:58:36] Disconnect: 192.168.3.101:47522
+```
+
+Sending requests on the client via proxy:
+
+```shell
+curl -x http://192.168.3.100:8080 --proxy-user adm:adm https://kinozal.tv/browse.php?s=the+rookie
+curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://kinozal.tv/browse.php?s=the+rookie
+curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://rutracker.org/forum/index.php
 ```
 
 ### 🔌 TCP
@@ -126,7 +154,7 @@ Examples:
 In the example, accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to a remote host with IP address `192.168.3.101`, where the application is running on port `80`.
 
 ```shell
-rpnet.exe --local 192.168.3.100:8443 --remote 192.168.3.101:80
+froxy --local 192.168.3.100:8443 --remote 192.168.3.101:80
 
 TCP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to 192.168.3.101:80
@@ -150,18 +178,20 @@ But this method is not suitable for proxying requests to remote resources over t
 $(Test-NetConnection 172.67.189.243 -Port 443).TcpTestSucceeded
 True
 
-rpnet.exe--local localhost:8443 --remote 172.67.189.243:443
+froxy--local localhost:8443 --remote 172.67.189.243:443
 
 TCP protocol is used
 Error: An invalid IP address was specified.
 ```
+
+To solve this problem, it is necessary to use proxying via the HTTP or HTTPS protocol.
 
 ### SSH over TCP
 
 Example of ssh connection through a proxy server (implementation of ssh tunneling):
 
 ```shell
-rpnet.exe --local 192.168.3.100:3131 --remote 192.168.3.101:2121
+froxy --local 192.168.3.100:3131 --remote 192.168.3.101:2121
 ```
 
 <h1 align="center">
@@ -175,23 +205,23 @@ An example of redirecting requests from a client (the `rsyslog` client configura
 💡 When using the `UDP` protocol, the local address is not specified.
 
 ```shell
-rpnet.exe --local 5514 --remote 192.168.3.100:514
+froxy --local 5514 --remote 192.168.3.100:514
 ```
 
 <h1 align="center">
     <img src="screen/udp-syslog-relay.jpg" width="700"/></a>
 </h1>
 
-### 🌐 HTTP
+### 🌐 HTTP & HTTPS
 
-When using proxying using the **HTTP or HTTPS** protocol, you must pass a url address that begins with the name of the protocol `http://` or `https://`.
+When using proxying using the **HTTP or HTTPS** protocols, you must pass a url address that begins with the name of the protocol `http://` or `https://`.
 
 💡 Data transfer via `GET` and `POST` requests is supported.
 
 In the example, the proxy server accepts requests on the interface with the IP address `192.168.3.100` on port `8443` to redirect to the remote url resource [Kinozal](https://kinozal.tv). The connection is made from a client with the IP address `192.168.3.99` using the `GET` method. Lists all the endpoints that the client contacts to load the home page.
 
 ```shell
-rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv
+froxy --local 192.168.3.100:8443 --remote https://kinozal.tv
 
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
@@ -253,7 +283,7 @@ Authorization on the site via `POST` request:
 To use authorization on the proxy server side, you must fill in the appropriate parameters at startup. If the client transmits incorrect authorization data, this will be displayed in the log.
 
 ```shell
-rpnet.exe --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
+froxy --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
 
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv
@@ -292,3 +322,15 @@ Authorization is used
 [16:07:56] 192.168.3.100 GET: /pic/flags_all.png?v=1
 [16:07:57] 192.168.3.100 GET: /pic/favicon.ico
 ```
+
+---
+
+## Other projects:
+
+- 🧲 [Kinozal bot](https://github.com/Lifailon/Kinozal-Bot) - Telegram bot that allows you to automate the process of delivering content to your TV using only your phone. Provides a convenient interface for interacting with the torrent tracker [Kinozal](https://kinozal.tv) and the database [TMDB](https://www.themoviedb.org) to track the release date of episodes, seasons and search for actors for each episode , as well as the ability to manage the torrent client [qBittorrent](https://github.com/qbittorrent/qBittorrent) or [Transmission](https://github.com/transmission/transmission) on your computer, being remote from home and from single interface.
+
+- ✨ [TorAPI](https://github.com/Lifailon/TorAPI/blob/main/README_RU.md) - unofficial API (backend) for torrent trackers RuTracker, Kinozal, RuTor and NoNameClub. Used for quick search of distributions, as well as obtaining torrent files, magnet links and detailed information about distribution by movie title, TV series or distribution ID, and also provides RSS news feed for all providers.
+
+- 🔎 [LibreKinopoisk](https://github.com/Lifailon/LibreKinopoisk) - Google Chrome extension that adds buttons to the Kinopoisk website and provides a **TorAPI** interface in the [Jackett](https://github.com/Jackett/Jackett) style (without the need to install a server part and use a VPN) for quickly searching for movies and series in open sources.
+
+- ❤️ [WebTorrent Desktop api](https://github.com/Lifailon/webtorrent-desktop-api) - fork of the [WebTorrent Desktop](https://github.com/webtorrent/webtorrent-desktop) client, which added a remote control mechanism via the `REST API` based on [Express Framework](https://github.com/expressjs/express).
