@@ -35,6 +35,7 @@ class Froxy {
                 Console.WriteLine();
                 Console.WriteLine("Examples:");
                 Console.WriteLine(@"  froxy --forward 8080");
+                Console.WriteLine(@"  froxy --forward 8080 >> froxy.log &");
                 Console.WriteLine(@"  froxy --local 5514 --remote 192.168.3.100:514");
                 Console.WriteLine(@"  froxy --local 127.0.0.1:8443 --remote 192.168.3.101:80");
                 Console.WriteLine(@"  froxy --local 127.0.0.1:8443 --remote https://example.com");

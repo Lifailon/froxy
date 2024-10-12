@@ -152,7 +152,7 @@ curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://rutracker.org
 You can also run the proxy in daemon mode (background process) and pass the log output to a file:
 
 ```shell
-froxy --forward 8080 --user admin --pass admin >> roxy.log & 
+froxy --forward 8080 --user admin --pass admin >> froxy.log & 
 ```
 
 The syntax is the same for both systems (Linux and Windows). It is possible to launch multiple instances to process different requests in reverse proxy mode.

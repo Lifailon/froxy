@@ -152,7 +152,7 @@ curl -x http://192.168.3.100:8080 --proxy-user admin:admin https://rutracker.org
 Вы также можете запустить прокси в режиме демона (фоновый процесс) и передать вывод логов в файл:
 
 ```shell
-froxy --forward 8080 --user admin --pass admin >> roxy.log & 
+froxy --forward 8080 --user admin --pass admin >> froxy.log & 
 ```
 
 Синтаксис одинаков для обоих систем (Linux и Windows). Возможно запустить несколько экземпляров для обработки разных запросов в режиме реверсивного прокси.
