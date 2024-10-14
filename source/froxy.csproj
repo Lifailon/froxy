@@ -9,7 +9,15 @@
         <FileVersion>0.3.0</FileVersion>
         <Authors>Lifailon</Authors>
         <ProjectUrl>https://github.com/Lifailon/froxy</ProjectUrl>
-        <AssemblyTitle>Forward and Reverse proxy base on .NET for TCP, UDP protocols and GET and POST methods for HTTP/HTTPS</AssemblyTitle>
+        <AssemblyTitle>Forward (classic) and reverse proxy server based on .NET</AssemblyTitle>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>froxy</ToolCommandName>
+        <PackageId>froxy</PackageId>
+        <Description>Forward (classic) and reverse proxy server based on .NET</Description>
+        <Tags>CSharp, .NET, Cli, Console, Network, Proxy, Sockets, TcpListener, TcpClient, UdpClient, HttpListener, HttpClient</Tags>
+        <RepositoryUrl>https://github.com/Lifailon/froxy</RepositoryUrl>
+        <LicenseUrl>https://github.com/Lifailon/froxy/blob/main/LICENSE</LicenseUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="test\*" />
