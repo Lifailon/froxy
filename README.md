@@ -2,13 +2,19 @@
     Froxy
 </h1>
 
+<p align="center">
+    <a href="https://hub.docker.com/r/lifailon/froxy"><img title="Docker"src="https://img.shields.io/docker/image-size/lifailon/froxy?&color=blue&logo=Docker&label=Docker+Image"></a>
+    <a href="https://www.nuget.org/packages/froxy"><img title="Docker"src="https://img.shields.io/nuget/vpre/froxy?logo=dotnet&label=NuGet"></a>
+</p>
+
 <h4 align="center">
     <strong>English</strong> | <a href="README_RU.md">Русский</a>
 </h4>
 
-A cross-platform command line utility for implementing a classic forward and reverse proxy server based on **.NET**. It supports forwarding any `HTTPS` traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** (`GET` and `POST` requests are supported) protocols for implementing a reverse proxy server.
+A cross-platform command line utility for implementing a forward (classic) and reverse proxy server based on **.NET**. It supports forwarding any **HTTPS** traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** (`GET` and `POST` requests are supported) protocols for implementing a reverse proxy server.
 
 - [Installation](#-installation)
+- [NuGet](#-nuget)
 - [Build](#-build)
 - [Docker](#-docker)
 - [Usage examples](#-usage)
@@ -64,11 +70,27 @@ sudo chmod +x /usr/local/bin/froxy
 
 💡 Tested on Ubuntu system.
 
-### 🔨 No dependency installation
+### No dependency installation
 
 If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/froxy/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
 
-### 📦 Build
+## 📦 NuGet
+
+You can install the application from the package manager [NuGet](https://www.nuget.org/packages/froxy):
+
+```shell
+dotnet tool install --global froxy  
+```
+
+After installation, the application will be available as a `froxy` executable from any location on the system.
+
+Package the application for publication on [NuGet](https://www.nuget.org):
+
+```shell
+dotnet pack
+```
+
+## 🔨 Build
 
 - Clone the repository:
 
@@ -165,7 +187,7 @@ docker run -d \
     lifailon/froxy
 ```
 
-You can run multiple instances of an application at the same time, example [docker-compose](docker-compose.yml) for the [TMDB](https://www.themoviedb.org) web interface on port `8081` and `api` on port `8082` without authorization:
+You can run multiple instances of an application at the same time, example [docker-compose](docker-compose.yml) for the [TMDB](https://www.themoviedb.org) web interface on port `8081` and **api** on port `8082` without authorization:
 
 ```shell
 docker-compose up -d -f docker-compose.yml
