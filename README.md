@@ -11,14 +11,14 @@
     <strong>English</strong> | <a href="README_RU.md">Русский</a>
 </h4>
 
-A cross-platform command line utility for implementing a forward (classic) and reverse proxy server based on **.NET**. It supports forwarding any **HTTPS** traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** (`GET` and `POST` requests are supported) protocols for implementing a reverse proxy server.
+A cross-platform command line utility for implementing a forward (classic) and reverse proxy server based on **.NET**. It supports forwarding of any **HTTPS** traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** protocols for reverse proxying. For web traffic redirection, `GET` and `POST` requests are supported with headers and body of the request passed from the client, which allows using `REST API` requests and authorization on sites.
 
 - [Installation](#-installation)
 - [NuGet](#-nuget)
 - [Build](#-build)
 - [Docker](#-docker)
 - [Usage examples](#-usage)
-- - [Forware Proxy](#-forward-proxy)
+- - [Forward Proxy](#-forward-proxy)
 - - [TCP](#-tcp)
 - - [SSH Tunneling](#-ssh-tunneling-over-tcp)
 - - [UDP](#-udp)
@@ -179,7 +179,7 @@ docker run -d \
     --name froxy \
     -e FORWARD="0" \
     -e LOCAL="*:$port" \
-    -e REMOTE="https://github.com" \
+    -e REMOTE="https://kinozal.tv" \
     -e USER="false" \
     -e PASSWORD="false" \
     -p $port:$port \
@@ -190,8 +190,12 @@ docker run -d \
 You can run multiple instances of an application at the same time, example [docker-compose](docker-compose.yml) for the [TMDB](https://www.themoviedb.org) web interface on port `8081` and **api** on port `8082` without authorization:
 
 ```shell
-docker-compose up -d -f docker-compose.yml
+docker-compose -f docker-compose.yml up -d
 ```
+
+In the example below, the machine does not have direct access to **api**, so the request is made through a proxy and a reverse proxy:
+
+![img](image/docker-proxy.jpg)
 
 To stop all running services:
 
@@ -332,7 +336,7 @@ An example of forwarding requests from a client (the `rsyslog` client configurat
 froxy --local 5514 --remote 192.168.3.100:514
 ```
 
-![](image/udp-syslog-relay.jpg)
+![img](image/udp-syslog-relay.jpg)
 
 ### 🌐 HTTP and HTTPS
 
