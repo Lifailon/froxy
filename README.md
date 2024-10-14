@@ -1,6 +1,6 @@
-<h2 align="center">
+<h1 align="center">
     Froxy
-</h2>
+</h1>
 
 <h4 align="center">
     <strong>English</strong> | <a href="README_RU.md">Русский</a>
@@ -10,7 +10,7 @@ A cross-platform command line utility for implementing a classic forward and rev
 
 - [Installation](#-installation)
 - [Build](#-build)
-- [Run in a Docker container](#-docker)
+- [Docker](#-docker)
 - [Usage examples](#-usage)
 - - [Forware Proxy](#-forward-proxy)
 - - [TCP](#-tcp)
@@ -113,19 +113,25 @@ dotnet publish -r linux-x64 -c Release --self-contained true
 
 ## 🐳 Docker
 
+Download the built image from [DockerHub](https://hub.docker.com/r/lifailon/froxy):
+
+```shell
+docker pull lifailon/froxy:latest
+```
+
 To build a container image from project source files, use [dockerfile](dockerfile):
 
 ```shell
-docker build -t froxy .
+docker build -t lifailon/froxy .
 ```
 
-To pre-build the application (if this has not been done previously on the system), use [dockerfile-build](dockerfile-build):
+To pre-build the application (if this has not been done previously on the local system), use [dockerfile-pre-build](dockerfile-pre-build):
 
 ```shell
-docker build -t froxy -f dockerfile-pre-build .
+docker build -t lifailon/froxy -f dockerfile-pre-build .
 ```
 
-Example of a classic proxy server running on port `8080`:
+An example of running a classic proxy server on port `8080` using authorization in the container:
 
 ```shell
 port=8080
@@ -138,10 +144,38 @@ docker run -d \
     -e PASSWORD="admin"\
     -p $port:$port \
     --restart=unless-stopped \
-    froxy
+    lifailon/froxy
 ```
 
-If you plan to use a reverse proxy, leave `FORWARD` empty and instead pass the values to the `LOCAL` and `REMOTE` variables.
+If you plan to use a reverse proxy, set the value to `FORWARD=0`, passing the values to the `LOCAL` and `REMOTE` variables instead. If authorization is not required, then pass the value `false` to the `USER` and `PASSWORD` parameters.
+
+An example of starting a reverse proxy server without authorization:
+
+```shell
+port=8443
+docker run -d \
+    --name froxy \
+    -e FORWARD="0" \
+    -e LOCAL="*:$port" \
+    -e REMOTE="https://github.com" \
+    -e USER="false" \
+    -e PASSWORD="false" \
+    -p $port:$port \
+    --restart=unless-stopped \
+    lifailon/froxy
+```
+
+You can run multiple instances of an application at the same time, example [docker-compose](docker-compose.yml) for the [TMDB](https://www.themoviedb.org) web interface on port `8081` and `api` on port `8082` without authorization:
+
+```shell
+docker-compose up -d -f docker-compose.yml
+```
+
+To stop all running services:
+
+```shell
+docker-compose down
+```
 
 ## 📑 Usage
 
@@ -349,7 +383,7 @@ Authorization on the site via `POST` request:
 To use authorization on the proxy server side, you must fill in the appropriate parameters at startup. If the client transmits incorrect authorization data, this will be displayed in the log.
 
 ```shell
-froxy --local 192.168.3.100:8443 --remote https://kinozal.tv --userName proxy --password admin
+froxy --local 192.168.3.100:8443 --remote https://kinozal.tv --user proxy --pass admin
 
 HTTP protocol is used
 Listening on 192.168.3.100:8443 for forwarding to https://kinozal.tv

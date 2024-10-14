@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  rutracker:
+    image: lifailon/froxy
+    environment:
+      FORWARD: "0"
+      LOCAL: "*:9001"
+      REMOTE: "https://rutracker.org"
+      USER: "false"
+      PASSWORD: "false"
+    ports:
+      - "9001:9001"
+  
+  kinozal:
+    image: lifailon/froxy
+    environment:
+      FORWARD: "0"
+      LOCAL: "*:9002"
+      REMOTE: "https://kinozal.tv"
+      USER: "false"
+      PASSWORD: "false"
+    ports:
+      - "9002:9002"
+
+  rutor:
+    image: lifailon/froxy
+    environment:
+      FORWARD: "0"
+      LOCAL: "*:9003"
+      REMOTE: "https://rutor.info"
+      USER: "false"
+      PASSWORD: "false"
+    ports:
+      - "9003:9003"
+
+  nnmclub:
+    image: lifailon/froxy
+    environment:
+      FORWARD: "0"
+      LOCAL: "*:9004"
+      REMOTE: "https://nnmclub.to"
+      USER: "false"
+      PASSWORD: "false"
+    ports:
+      - "9004:9004"

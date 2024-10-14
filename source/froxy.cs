@@ -63,10 +63,18 @@ class Froxy {
             else if ((args[i] == "-r" || args[i] == "--remote") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 remote = args[i + 1];
             }
-            else if ((args[i] == "-u" || args[i] == "--user") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            else if ((args[i] == "-u" || args[i] == "--user") &&
+                i + 1 < args.Length &&
+                !args[i + 1].StartsWith("-") &&
+                args[i + 1].ToLower() != "false")
+            {
                 userName = args[i + 1];
             }
-            else if ((args[i] == "-p" || args[i] == "--pass") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
+            else if ((args[i] == "-p" || args[i] == "--pass") &&
+                i + 1 < args.Length &&
+                !args[i + 1].StartsWith("-") &&
+                args[i + 1].ToLower() != "false")
+            {
                 password = args[i + 1];
             }
         }
