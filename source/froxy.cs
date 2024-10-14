@@ -270,14 +270,22 @@ class Froxy {
         try {
             // Объявляем переменную для хранения ответа от удаленного сервера
             HttpResponseMessage remoteResponse;
-            // Обрабатываем GET-запрос
+            // Копируем заголовки из запроса клиента (headers) для работы api
+            foreach (var header in request.Headers.AllKeys) {
+                // Исключаем заголовки Host и Accept-Encoding, которыми HttpClient управляет самостоятельно
+                if (!header.Equals("Host", StringComparison.OrdinalIgnoreCase) && 
+                    !header.Equals("Accept-Encoding", StringComparison.OrdinalIgnoreCase)) {
+                    client.DefaultRequestHeaders.TryAddWithoutValidation(header, request.Headers[header]);
+                }
+            }
+            // Обрабатываем GET-запрос + Headers
             if (request.HttpMethod == "GET") {
                 // Перенаправляем GET-запрос на удаленный сервер (параллельно без блокировки основного потока)
                 remoteResponse = await client.GetAsync(remote + request.RawUrl);
             }
-            // Обрабатываем POST-запрос
+            // Обрабатываем POST-запрос + Headers + Body
             else if (request.HttpMethod == "POST") {
-                // Читаем содержимое тела запроса от клиента
+                // Читаем содержимое тела (body) запроса от клиента
                 var requestData = await new StreamReader(request.InputStream).ReadToEndAsync();
                 // Создаем объект с содержимым запроса для отправки на удаленный сервер
                 var content = new StringContent(requestData, Encoding.UTF8, request.ContentType ?? "application/json");
@@ -324,6 +332,8 @@ class Froxy {
             response.OutputStream.Write(errorData, 0, errorData.Length);
         }
         finally {
+            // Очищаем заголовки (Headers) после каждого запроса
+            client.DefaultRequestHeaders.Clear();
             // Закрываем выходной поток
             response.OutputStream.Close();
             // Закрываем ответ
@@ -376,7 +386,7 @@ class Froxy {
             }
         }
         // Создаем WebClient для выполнения запроса к удаленному серверу
-        #pragma warning disable SYSLIB0014 // Тип или член устарел
+        #pragma warning disable SYSLIB0014 // Тип устарел
         using (var client = new WebClient()) {
             // Добавляем заголовок User-Agent из запроса клиента
             client.Headers.Add("User-Agent", request.UserAgent);
@@ -406,7 +416,7 @@ class Froxy {
                 }
             }
         }
-        #pragma warning restore SYSLIB0014 // Тип или член устарел
+        #pragma warning restore SYSLIB0014 // Тип устарел
         // Логируем код ответа, только если есть ошибка
         if (response.StatusCode != 200) {
             Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] Error: {response.StatusCode}");
