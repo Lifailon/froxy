@@ -11,7 +11,7 @@
     <strong>English</strong> | <a href="README_RU.md">Русский</a>
 </h4>
 
-A cross-platform command line utility for implementing a forward (classic) and reverse proxy server based on **.NET**. It supports forwarding of any **HTTPS** traffic (`CONNECT` requests) for forward proxying and **TCP**, **UDP** or **HTTP/HTTPS** protocols for reverse proxying. For web traffic redirection, `GET` and `POST` requests are supported with headers and body of the request passed from the client, which allows using `REST API` requests and authorization on sites.
+A cross-platform command line utility for implementing a SOCKS, HTTP and reverse proxy server based on **.NET**. It supports **SOCKS5** protocol for tunneling TCP traffic and **HTTP** protocol for direct (classical) proxying of any **HTTPS** traffic (`CONNECT` requests), as well as **TCP**, **UDP** and **HTTP/HTTPS** protocols for reverse proxying. For web traffic forwarding via reverse proxy, `GET` and `POST` requests are supported, with headers and body of the request passed from the client, which allows to use `API` requests and pass authorization on sites (cookie passing).
 
 - [Installation](#-installation)
 - [NuGet](#-nuget)
@@ -19,11 +19,14 @@ A cross-platform command line utility for implementing a forward (classic) and r
 - [Docker](#-docker)
 - [Usage examples](#-usage)
 - - [Forward Proxy](#-forward-proxy)
-- - [TCP](#-tcp)
-- - [SSH Tunneling](#-ssh-tunneling-over-tcp)
-- - [UDP](#-udp)
-- - [HTTP and HTTPS](#-http-and-https)
-- - [Authorization](#-authorization)
+- - - [SOCKS](#socks)
+- - - [HTTP](#http)
+- - [Reverse Proxy](#-reverse-proxy)
+- - - [TCP](#-tcp)
+- - - [SSH Tunneling](#-ssh-tunneling-over-tcp)
+- - - [UDP](#-udp)
+- - - [HTTP and HTTPS](#-http-and-https)
+- - - [Authorization](#-authorization)
 
 ## 💁 For what?
 
@@ -64,7 +67,8 @@ sudo apt-get install -y dotnet-runtime-8.0
 - Download the `froxy` executable file to the `/usr/local/bin/` directory and grant execution permissions:
 
 ```shell
-sudo curl -s -L https://github.com/Lifailon/froxy/releases/download/0.3.0/froxy-0.3.0-linux-x64 -o /usr/local/bin/froxy
+arch="x64" # or "arm64"
+sudo curl -s -L "https://github.com/Lifailon/froxy/releases/download/0.4.0/froxy-0.4.0-linux-$arch" -o /usr/local/bin/froxy
 sudo chmod +x /usr/local/bin/froxy
 ```
 
@@ -72,7 +76,7 @@ sudo chmod +x /usr/local/bin/froxy
 
 ### No dependency installation
 
-If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/froxy/releases/latest) a zip archive of the **self-contained** version, which already contains all the dependencies (available for both platforms).
+If you don't want to install the `.NET` runtime, you can [download](https://github.com/Lifailon/froxy/releases/latest) a zip archive of the **self-contained** portable version, which already contains all the dependencies (available for both platforms).
 
 ## 📦 NuGet
 
@@ -94,14 +98,14 @@ dotnet pack
 
 - Clone the repository:
 
-```
+```shell
 git clone https://github.com/Lifailon/froxy
 cd froxy/source
 ```
 
 - Build and run the application:
 
-```
+```shell
 dotnet build && dotnet run [parameters]
 ```
 
@@ -109,13 +113,13 @@ dotnet build && dotnet run [parameters]
 
 Windows:
 
-```
+```shell
 dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
 ```
 
 Linux:
 
-```
+```shell
 dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true
 ```
 
@@ -123,13 +127,13 @@ dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true
 
 Windows:
 
-```
+```shell
 dotnet publish -r win-x64 -c Release --self-contained true
 ```
 
 Linux:
 
-```
+```shell
 dotnet publish -r linux-x64 -c Release --self-contained true
 ```
 
@@ -153,23 +157,24 @@ To pre-build the application (if this has not been done previously on the local 
 docker build -t lifailon/froxy -f dockerfile-pre-build .
 ```
 
-An example of running a classic proxy server on port `8080` using authorization in the container:
+An example of running a classic proxy server for **HTTP** protocol on port `8080` using authorization in the container:
 
 ```shell
 port=8080
 docker run -d \
     --name froxy \
+    -e SOCKS=0 \
     -e FORWARD=$port \
     -e LOCAL="" \
-    -e REMOTE=""\
-    -e USER="admin"\
-    -e PASSWORD="admin"\
+    -e REMOTE="" \
+    -e USER="admin" \
+    -e PASSWORD="admin" \
     -p $port:$port \
     --restart=unless-stopped \
     lifailon/froxy
 ```
 
-If you plan to use a reverse proxy, set the value to `FORWARD=0`, passing the values to the `LOCAL` and `REMOTE` variables instead. If authorization is not required, then pass the value `false` to the `USER` and `PASSWORD` parameters.
+If you plan to use a reverse proxy, set the value to `SOCKS=0` and `FORWARD=0`, passing the values to the `LOCAL` and `REMOTE` variables instead. If authorization is not required, then pass the value `false` to the `USER` and `PASSWORD` parameters.
 
 An example of starting a reverse proxy server without authorization:
 
@@ -177,6 +182,7 @@ An example of starting a reverse proxy server without authorization:
 port=8443
 docker run -d \
     --name froxy \
+    -e SOCKS=0 \
     -e FORWARD="0" \
     -e LOCAL="*:$port" \
     -e REMOTE="https://kinozal.tv" \
@@ -215,13 +221,15 @@ Forward and reverse proxy server base on .NET.
 Parameters:
   -h, --help                       Get help.
   -v, --version                    Get version.
-  -f, --forward <port>             Start proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.
+  -s, --socks <port>               Start SOCKS5 proxy server forwarding TCP and UDP traffic via port selected in the 1024-49151 range.
+  -f, --forward <port>             Start HTTP proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.
   -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.
   -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.
   -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).
   -p, --pass <password>            User password for authorization.
 
 Examples:
+  froxy --socks 1080
   froxy --forward 8080
   froxy --forward 8080 >> froxy.log &
   froxy --local 5514 --remote 192.168.3.100:514
@@ -232,7 +240,46 @@ Examples:
 
 ### 📭 Forward Proxy
 
-Running a direct proxy on the server:
+#### SOCKS
+
+Running the proxy server using the **SOCKS5** protocol on port `7070`, and checking the connection on the Android device via client [Super Proxy](https://play.google.com/store/apps/details?id=com.scheler.superproxy):
+
+```shell
+froxy --socks 7070 --user admin --pass admin
+
+SOCKS5 proxy server running on port 7070
+[16:10:55] Error authentication: 192.168.3.58:49962
+Received username: admin, password: admin2
+[16:10:59] Request: 192.168.3.58:49984 => 8.8.8.4:853
+[16:11:06] Request: 192.168.3.58:50024 => kinozal.tv:443
+[16:11:06] Request: 192.168.3.58:50036 => optimizationguide-pa.googleapis.com:443
+[16:11:06] Request: 192.168.3.58:50040 => kinozal.tv:443
+[16:11:06] Request: 192.168.3.58:50050 => myroledance.com:443
+[16:11:06] Request: 192.168.3.58:57488 => tmfjas.com:443
+[16:11:06] Request: 192.168.3.58:57484 => clientservices.googleapis.com:443
+[16:11:06] Request: 192.168.3.58:57504 => i124.fastpic.org:443
+[16:11:07] Request: 192.168.3.58:57518 => counter.yadro.ru:443
+[16:11:07] Request: 192.168.3.58:57532 => klmainprost.com:443
+[16:11:08] Request: 192.168.3.58:57546 => tmfjas.com:443
+[16:11:09] Request: 192.168.3.58:57562 => fonts.gstatic.com:443
+[16:11:09] Request: 192.168.3.58:57564 => readaloud.googleapis.com:443
+[16:11:09] Request: 192.168.3.58:57572 => readaloud.googleapis.com:443
+[16:11:10] Disconnect: 192.168.3.58:57572
+[16:11:11] Disconnect: 192.168.3.58:49984
+[16:11:12] Request: 192.168.3.58:57586 => nearbydevices-pa.googleapis.com:443
+[16:11:25] Request: 192.168.3.58:46610 => clients4.google.com:443
+[16:11:26] Disconnect: 192.168.3.58:57518
+[16:11:36] Request: 192.168.3.58:43958 => userlocation.googleapis.com:443
+[16:11:37] Disconnect: 192.168.3.58:50024
+[16:11:37] Disconnect: 192.168.3.58:50040
+...
+```
+
+![android-client](image/android-client.jpg)
+
+#### HTTP
+
+Running a forwarding proxy on the server for `HTTP` protocol:
 
 ```shell
 froxy --forward 8080 --user admin --pass admin
@@ -273,7 +320,9 @@ Linux:
 pkill froxy
 ```
 
-### 🔌 TCP
+### ⚡ Reverse Proxy
+
+#### 🔌 TCP
 
 In the example, accepts requests on the interface with IP address `192.168.3.100` and port `8443` to redirect to a remote host with IP address `192.168.3.101`, where the application is running on port `80`.
 
@@ -310,7 +359,7 @@ Error: An invalid IP address was specified.
 
 To solve this problem, it is necessary to use proxying via the HTTP or HTTPS protocol.
 
-### 🚧 SSH tunneling over TCP
+#### 🚧 SSH tunneling over TCP
 
 Example ssh connection via proxy server:
 
@@ -326,7 +375,7 @@ ssh lifailon@192.168.3.100 -p 3131
 
 ![img](image/tcp-ssh-tunnel.jpg)
 
-### 📡 UDP
+#### 📡 UDP
 
 An example of forwarding requests from a client (the `rsyslog` client configuration on the right) via UDP (one `@` character in the configuration) to the [Visual Syslog server](https://github.com/MaxBelkov/visualsyslog) listening to requests on port `514` through a proxy server that listens for requests on port `5514`.
 
@@ -338,7 +387,7 @@ froxy --local 5514 --remote 192.168.3.100:514
 
 ![img](image/udp-syslog-relay.jpg)
 
-### 🌐 HTTP and HTTPS
+#### 🌐 HTTP and HTTPS
 
 When using proxying using the **HTTP or HTTPS** protocols, you must pass a url address that begins with the name of the protocol `http://` or `https://`.
 
@@ -404,7 +453,7 @@ Authorization on the site via `POST` request:
 [16:05:21] 192.168.3.99 GET: /pic/flags_all.png?v=1
 ```
 
-### 🔓 Authorization
+#### 🔓 Authorization
 
 To use authorization on the proxy server side, you must fill in the appropriate parameters at startup. If the client transmits incorrect authorization data, this will be displayed in the log.
 
