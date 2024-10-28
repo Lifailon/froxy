@@ -2,15 +2,15 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>froxy</id>
-    <version>0.3.3</version>
+    <version>0.4.0</version>
     <authors>Lifailon</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
-    <description>Forward (classic) and reverse proxy server based on .NET</description>
+    <description>Forward (classic) SOCKS, HTTPS and reverse proxy server based on .NET</description>
     <tags>CSharp, .NET, Cli, Console, Network, Proxy, Sockets, TcpListener, TcpClient, UdpClient, HttpListener, HttpClient</tags>
     <packageTypes>
       <packageType name="DotnetTool" />
     </packageTypes>
-    <repository type="git" url="https://github.com/Lifailon/froxy" commit="4591c77f4c78a1ae73bc8d87fd056cb263a0e851" />
+    <repository type="git" url="https://github.com/Lifailon/froxy" commit="cd7ac0ebb3196053da344e0359dac5e8b9ec2fc6" />
   </metadata>
 </package>
