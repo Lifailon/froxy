@@ -5,8 +5,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
         <SelfContained>false</SelfContained>
-        <Version>0.3.3</Version>
-        <FileVersion>0.3.3</FileVersion>
+        <Version>0.4.0</Version>
+        <FileVersion>0.4.0</FileVersion>
         <Authors>Lifailon</Authors>
         <ProjectUrl>https://github.com/Lifailon/froxy</ProjectUrl>
         <AssemblyTitle>Forward (classic) and reverse proxy server based on .NET</AssemblyTitle>

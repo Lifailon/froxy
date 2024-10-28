@@ -12,6 +12,8 @@ class Froxy {
     static async Task Main(string[] args) {
         // Объявляем переменные для параметров
         int port = 0;
+        bool forward = false;
+        bool socks = false;
         string local_addr = null;
         string local = null;
         string remote = null;
@@ -27,13 +29,15 @@ class Froxy {
                 Console.WriteLine("Parameters:");
                 Console.WriteLine("  -h, --help                       Get help.");
                 Console.WriteLine("  -v, --version                    Get version.");
-                Console.WriteLine("  -f, --forward <port>             Start proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.");
+                Console.WriteLine("  -s, --socks <port>               Start SOCKS5 proxy server forwarding TCP and UDP traffic via port selected in the 1024-49151 range.");
+                Console.WriteLine("  -f, --forward <port>             Start HTTP proxy server forwarding HTTPS traffic (CONNECT method) via port selected in the 1024-49151 range.");
                 Console.WriteLine("  -l, --local <port/address:port>  The interface address and port for TCP or only the port for UDP, through which proxy requests will pass.");
                 Console.WriteLine("  -r, --remote <address:port/url>  TCP/UDP or HTTP/HTTPS (GET and POST methods) address of the remote resource to which requests will be proxy.");
                 Console.WriteLine("  -u, --user <login>               User name for authorization (supported for forward and reverse HTTP/HTTPS protocols only).");
                 Console.WriteLine("  -p, --pass <password>            User password for authorization.");
                 Console.WriteLine();
                 Console.WriteLine("Examples:");
+                Console.WriteLine(@"  froxy --socks 1080");
                 Console.WriteLine(@"  froxy --forward 8080");
                 Console.WriteLine(@"  froxy --forward 8080 >> froxy.log &");
                 Console.WriteLine(@"  froxy --local 5514 --remote 192.168.3.100:514");
@@ -44,17 +48,28 @@ class Froxy {
                 return;
             }
             if (args[i].Contains("-v")) {
-                Console.WriteLine("0.3.0");
+                Console.WriteLine("0.4.0");
                 return;
             }
-            if ((args[i] == "-f" || args[i] == "--forward") && 
+            if ((args[i] == "-s" || args[i] == "--socks") && 
+                i + 1 < args.Length && 
+                !args[i + 1].StartsWith("-") && 
+                int.TryParse(args[i + 1], out int checkSocksPort) && 
+                checkSocksPort > 1023 && 
+                checkSocksPort < 49151)
+            {
+                socks = true;
+                port = checkSocksPort;
+            }
+            else if ((args[i] == "-f" || args[i] == "--forward") && 
                 i + 1 < args.Length && 
                 !args[i + 1].StartsWith("-") && 
                 int.TryParse(args[i + 1], out int checkPort) && 
                 checkPort > 1023 && 
                 checkPort < 49151)
             {
-                port = int.Parse(args[i + 1]);
+                forward = true;
+                port = checkPort;
             }
             else if ((args[i] == "-l" || args[i] == "--local") && i + 1 < args.Length && !args[i + 1].StartsWith("-")) {
                 local_addr = args[i + 1];
@@ -78,10 +93,16 @@ class Froxy {
                 password = args[i + 1];
             }
         }
-        // Проверяем, нужно ли запустить обычный (прямой) прокси сервер
+        // Проверяем, нужно ли запустить SOCKS или HTTP прокси сервер
         if (port != 0) {
-            await ProxyServer.ProxyStart(port, userName, password);                
-            return;
+            if (socks == true) {
+                await Socks5ProxyServer.ProxyStart(port, userName, password);
+                return;
+            }
+            else if (forward == true) {
+                await ProxyServer.ProxyStart(port, userName, password);                
+                return;
+            }
         }
         // Проверяем, что были переданы все нужные параметры для запуска
         if (local == null || remote == null) {
