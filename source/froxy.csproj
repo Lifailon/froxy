@@ -13,7 +13,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>froxy</ToolCommandName>
         <PackageId>froxy</PackageId>
-        <Description>Forward (classic) and reverse proxy server based on .NET</Description>
+        <Description>Forward (classic) SOCKS, HTTPS and reverse proxy server based on .NET</Description>
         <Tags>CSharp, .NET, Cli, Console, Network, Proxy, Sockets, TcpListener, TcpClient, UdpClient, HttpListener, HttpClient</Tags>
         <RepositoryUrl>https://github.com/Lifailon/froxy</RepositoryUrl>
         <LicenseUrl>https://github.com/Lifailon/froxy/blob/main/LICENSE</LicenseUrl>

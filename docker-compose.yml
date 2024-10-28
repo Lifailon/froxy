@@ -4,6 +4,7 @@ services:
   tmdb_web:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:8001"
       REMOTE: "https://themoviedb.org"
@@ -15,6 +16,7 @@ services:
   tmdb_api:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:8002"
       REMOTE: "https://api.themoviedb.org"

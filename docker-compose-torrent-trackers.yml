@@ -4,6 +4,7 @@ services:
   rutracker:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:9001"
       REMOTE: "https://rutracker.org"
@@ -15,6 +16,7 @@ services:
   kinozal:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:9002"
       REMOTE: "https://kinozal.tv"
@@ -26,6 +28,7 @@ services:
   rutor:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:9003"
       REMOTE: "https://rutor.info"
@@ -37,6 +40,7 @@ services:
   nnmclub:
     image: lifailon/froxy
     environment:
+      SOCKS: "0"
       FORWARD: "0"
       LOCAL: "*:9004"
       REMOTE: "https://nnmclub.to"
